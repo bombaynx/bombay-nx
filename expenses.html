@@ -1,0 +1,2297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Expenses | BOMBAY NX</title>
+
+    <!-- SUPABASE -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- AutoTable -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f3f0e8;
+            color: #171717;
+        }
+
+        /* ================= HEADER ================= */
+
+        .topbar {
+            background: #111;
+            color: #f2d37c;
+            min-height: 78px;
+            padding: 14px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #c7a52b;
+        }
+
+        .brand {
+            font-size: 27px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .tagline {
+            color: #ddd;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .top-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            font-weight: 700;
+            border-radius: 8px;
+        }
+
+        .btn {
+            padding: 11px 17px;
+            background: #c7a52b;
+            color: #111;
+        }
+
+        .btn:hover {
+            opacity: .88;
+        }
+
+        .btn-dark {
+            background: #222;
+            color: #f2d37c;
+            border: 1px solid #c7a52b;
+        }
+
+        .btn-danger {
+            background: #a52c2c;
+            color: white;
+        }
+
+        .btn-edit {
+            background: #333;
+            color: #f2d37c;
+        }
+
+        /* ================= PAGE ================= */
+
+        .page {
+            max-width: 1400px;
+            margin: auto;
+            padding: 25px;
+        }
+
+        .page-title {
+            font-size: 30px;
+            font-weight: 800;
+        }
+
+        .page-subtitle {
+            color: #666;
+            margin: 6px 0 22px;
+        }
+
+        /* ================= CARD ================= */
+
+        .card {
+            background: #fff;
+            border: 1px solid #e0dbd0;
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 22px;
+            box-shadow: 0 4px 18px rgba(0,0,0,.07);
+        }
+
+        .card-title {
+            font-size: 19px;
+            font-weight: 800;
+            margin-bottom: 18px;
+        }
+
+        /* ================= FORM ================= */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .field-wide {
+            grid-column: span 2;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #444;
+            margin-bottom: 7px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            height: 44px;
+            padding: 0 12px;
+            border: 1px solid #d5d0c5;
+            border-radius: 8px;
+            background: white;
+            font-size: 14px;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #c7a52b;
+            box-shadow: 0 0 0 2px rgba(199,165,43,.12);
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* ================= MESSAGE ================= */
+
+        .message {
+            display: none;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            font-weight: 700;
+        }
+
+        .message.success {
+            display: block;
+            background: #e6f6e9;
+            color: #23753a;
+            border: 1px solid #a7d8b1;
+        }
+
+        .message.error {
+            display: block;
+            background: #ffe6e6;
+            color: #9d2424;
+            border: 1px solid #e0aaaa;
+        }
+
+        /* ================= SUMMARY ================= */
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .summary {
+            background: #111;
+            color: white;
+            padding: 20px;
+            border-radius: 13px;
+            border-left: 5px solid #c7a52b;
+        }
+
+        .summary-label {
+            color: #ccc;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .summary-value {
+            color: #f2d37c;
+            font-size: 26px;
+            font-weight: 800;
+        }
+
+        /* ================= FILTER ================= */
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+
+        /* ================= TABLE ================= */
+
+        .table-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+        }
+
+        th {
+            background: #111;
+            color: #f2d37c;
+            padding: 13px 11px;
+            text-align: left;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 12px 11px;
+            border-bottom: 1px solid #e8e3da;
+            font-size: 13px;
+        }
+
+        tr:hover td {
+            background: #faf8f3;
+        }
+
+        .amount {
+            text-align: right;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .actions {
+            white-space: nowrap;
+        }
+
+        .small-btn {
+            padding: 7px 10px;
+            margin-right: 4px;
+            font-size: 12px;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 35px;
+            color: #777;
+        }
+
+        /* ================= PRINT ================= */
+
+        #printArea {
+            display: none;
+        }
+
+        @media print {
+
+            body * {
+                visibility: hidden;
+            }
+
+            #printArea,
+            #printArea * {
+                visibility: visible;
+            }
+
+            #printArea {
+                display: block;
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 25px;
+            }
+
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media(max-width: 1000px) {
+
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+        }
+
+        @media(max-width: 650px) {
+
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .top-buttons {
+                width: 100%;
+            }
+
+            .top-buttons button {
+                flex: 1;
+            }
+
+            .page {
+                padding: 14px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field-wide {
+                grid-column: span 1;
+            }
+
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-buttons {
+                flex-direction: column;
+            }
+
+            .form-buttons button {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="topbar no-print">
+
+        <div>
+            <div class="brand">
+                BOMBAY NX
+            </div>
+
+            <div class="tagline">
+                Menswear • Accounting • Management
+            </div>
+        </div>
+
+        <div class="top-buttons">
+
+            <button
+                class="btn btn-dark"
+                onclick="goDashboard()">
+
+                Dashboard
+
+            </button>
+
+            <button
+                class="btn btn-dark"
+                onclick="logout()">
+
+                Logout
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <main class="page">
+
+        <div class="no-print">
+
+            <div class="page-title">
+                Expenses
+            </div>
+
+            <div class="page-subtitle">
+                Record and manage BOMBAY NX shop expenses.
+            </div>
+
+
+            <div
+                id="messageBox"
+                class="message">
+            </div>
+
+
+            <!-- ================= ADD EXPENSE ================= -->
+
+            <section class="card">
+
+                <div class="card-title">
+                    💸 Add Expense
+                </div>
+
+
+                <div class="form-grid">
+
+                    <div class="field">
+
+                        <label>
+                            Expense Date
+                        </label>
+
+                        <input
+                            type="date"
+                            id="expenseDate">
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Category
+                        </label>
+
+                        <select id="expenseCategory">
+
+                            <option value="">
+                                Select Category
+                            </option>
+
+                            <option value="Rent">
+                                Rent
+                            </option>
+
+                            <option value="Electricity">
+                                Electricity
+                            </option>
+
+                            <option value="Salary">
+                                Salary
+                            </option>
+
+                            <option value="Telephone">
+                                Telephone
+                            </option>
+
+                            <option value="Advertising">
+                                Advertising
+                            </option>
+
+                            <option value="Stationery">
+                                Stationery
+                            </option>
+
+                            <option value="Transport">
+                                Transport
+                            </option>
+
+                            <option value="Repair & Maintenance">
+                                Repair & Maintenance
+                            </option>
+
+                            <option value="Bank Charges">
+                                Bank Charges
+                            </option>
+
+                            <option value="Other">
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="field field-wide">
+
+                        <label>
+                            Description
+                        </label>
+
+                        <input
+                            type="text"
+                            id="expenseDescription"
+                            placeholder="Enter expense description">
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Amount
+                        </label>
+
+                        <input
+                            type="number"
+                            id="expenseAmount"
+                            min="0"
+                            step="0.01"
+                            placeholder="0.00">
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Payment Mode
+                        </label>
+
+                        <select id="paymentMode">
+
+                            <option value="CASH">
+                                Cash
+                            </option>
+
+                            <option value="UPI">
+                                UPI
+                            </option>
+
+                            <option value="BANK">
+                                Bank
+                            </option>
+
+                            <option value="CARD">
+                                Card
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-buttons">
+
+                    <button
+                        id="saveBtn"
+                        class="btn"
+                        onclick="saveExpense()">
+
+                        💾 Save Expense
+
+                    </button>
+
+
+                    <button
+                        class="btn btn-dark"
+                        onclick="clearForm()">
+
+                        Clear
+
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= SUMMARY ================= -->
+
+            <div class="summary-grid">
+
+                <div class="summary">
+
+                    <div class="summary-label">
+                        Total Expenses
+                    </div>
+
+                    <div
+                        id="totalExpense"
+                        class="summary-value">
+
+                        ₹0.00
+
+                    </div>
+
+                </div>
+
+
+                <div class="summary">
+
+                    <div class="summary-label">
+                        Number of Expenses
+                    </div>
+
+                    <div
+                        id="expenseCount"
+                        class="summary-value">
+
+                        0
+
+                    </div>
+
+                </div>
+
+
+                <div class="summary">
+
+                    <div class="summary-label">
+                        Average Expense
+                    </div>
+
+                    <div
+                        id="averageExpense"
+                        class="summary-value">
+
+                        ₹0.00
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= FILTER ================= -->
+
+            <section class="card">
+
+                <div class="card-title">
+                    🔎 Expense Filter
+                </div>
+
+
+                <div class="filter-grid">
+
+                    <div class="field">
+
+                        <label>
+                            From Date
+                        </label>
+
+                        <input
+                            type="date"
+                            id="fromDate">
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            To Date
+                        </label>
+
+                        <input
+                            type="date"
+                            id="toDate">
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Category
+                        </label>
+
+                        <select id="filterCategory">
+
+                            <option value="">
+                                All Categories
+                            </option>
+
+                            <option value="Rent">
+                                Rent
+                            </option>
+
+                            <option value="Electricity">
+                                Electricity
+                            </option>
+
+                            <option value="Salary">
+                                Salary
+                            </option>
+
+                            <option value="Telephone">
+                                Telephone
+                            </option>
+
+                            <option value="Advertising">
+                                Advertising
+                            </option>
+
+                            <option value="Stationery">
+                                Stationery
+                            </option>
+
+                            <option value="Transport">
+                                Transport
+                            </option>
+
+                            <option value="Repair & Maintenance">
+                                Repair & Maintenance
+                            </option>
+
+                            <option value="Bank Charges">
+                                Bank Charges
+                            </option>
+
+                            <option value="Other">
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <button
+                        class="btn"
+                        onclick="loadExpenses()">
+
+                        Apply
+
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= REGISTER ================= -->
+
+            <section class="card">
+
+                <div class="table-head">
+
+                    <div class="card-title"
+                         style="margin:0;">
+
+                        📋 Expense Register
+
+                    </div>
+
+
+                    <div class="table-actions">
+
+                        <button
+                            class="btn btn-dark"
+                            onclick="printExpenses()">
+
+                            🖨️ Print
+
+                        </button>
+
+
+                        <button
+                            class="btn"
+                            onclick="downloadPDF()">
+
+                            📄 PDF
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    #
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                                <th>
+                                    Category
+                                </th>
+
+                                <th>
+                                    Description
+                                </th>
+
+                                <th style="text-align:right;">
+                                    Amount
+                                </th>
+
+                                <th>
+                                    Payment Mode
+                                </th>
+
+                                <th>
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="expenseTableBody">
+
+                            <tr>
+
+                                <td
+                                    colspan="7"
+                                    class="empty">
+
+                                    Loading...
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <!-- ================= PRINT AREA ================= -->
+
+        <div id="printArea">
+
+            <div
+                style="
+                text-align:center;
+                border-bottom:2px solid #111;
+                padding-bottom:12px;
+                margin-bottom:18px;
+                ">
+
+                <div
+                    style="
+                    font-size:26px;
+                    font-weight:800;
+                    letter-spacing:2px;
+                    ">
+
+                    BOMBAY NX
+
+                </div>
+
+
+                <div
+                    style="
+                    font-size:18px;
+                    font-weight:700;
+                    margin-top:6px;
+                    ">
+
+                    EXPENSE REPORT
+
+                </div>
+
+
+                <div
+                    id="printPeriod"
+                    style="
+                    font-size:12px;
+                    color:#555;
+                    margin-top:6px;
+                    ">
+
+                </div>
+
+            </div>
+
+
+            <div
+                style="
+                display:flex;
+                justify-content:space-between;
+                margin-bottom:15px;
+                ">
+
+                <strong>
+                    Total Expense:
+                </strong>
+
+                <strong id="printTotal">
+                    Rs. 0.00
+                </strong>
+
+            </div>
+
+
+            <table
+                style="
+                width:100%;
+                border-collapse:collapse;
+                ">
+
+                <thead>
+
+                    <tr>
+
+                        <th style="border:1px solid #222;padding:8px;">
+                            #
+                        </th>
+
+                        <th style="border:1px solid #222;padding:8px;">
+                            Date
+                        </th>
+
+                        <th style="border:1px solid #222;padding:8px;">
+                            Category
+                        </th>
+
+                        <th style="border:1px solid #222;padding:8px;">
+                            Description
+                        </th>
+
+                        <th style="border:1px solid #222;padding:8px;">
+                            Amount
+                        </th>
+
+                        <th style="border:1px solid #222;padding:8px;">
+                            Payment Mode
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="printTableBody"></tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+
+<script>
+
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+    "https://tetihwttelthoyeidwhl.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_RoeCtLr9AhiOqKJq_zMXOA_txz_hOy7";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let expenses = [];
+
+let editingExpenseId = null;
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function money(value) {
+
+    return Number(value || 0)
+        .toLocaleString(
+            "en-IN",
+            {
+                style: "currency",
+                currency: "INR",
+                minimumFractionDigits: 2
+            }
+        );
+
+}
+
+
+function pdfMoney(value) {
+
+    return "Rs. " +
+        Number(value || 0)
+            .toLocaleString(
+                "en-IN",
+                {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }
+            );
+
+}
+
+
+function today() {
+
+    const d = new Date();
+
+    const year =
+        d.getFullYear();
+
+    const month =
+        String(
+            d.getMonth() + 1
+        ).padStart(2, "0");
+
+    const day =
+        String(
+            d.getDate()
+        ).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+
+}
+
+
+function safe(value) {
+
+    return value == null
+        ? ""
+        : String(value);
+
+}
+
+
+function showMessage(
+    text,
+    type = "success"
+) {
+
+    const box =
+        document.getElementById(
+            "messageBox"
+        );
+
+    box.textContent = text;
+
+    box.className =
+        "message " + type;
+
+
+    setTimeout(() => {
+
+        box.className =
+            "message";
+
+    }, 3500);
+
+}
+
+
+/* =========================================================
+   AUTH
+========================================================= */
+
+async function checkLogin() {
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.auth
+            .getSession();
+
+
+    if (
+        error ||
+        !data ||
+        !data.session
+    ) {
+
+        window.location.href =
+            "owner-login.html";
+
+        return false;
+
+    }
+
+
+    return true;
+
+}
+
+
+async function logout() {
+
+    await supabaseClient.auth.signOut();
+
+    window.location.href =
+        "owner-login.html";
+
+}
+
+
+function goDashboard() {
+
+    window.location.href =
+        "dashboard.html";
+
+}
+
+
+/* =========================================================
+   CLEAR FORM
+========================================================= */
+
+function clearForm() {
+
+    editingExpenseId = null;
+
+
+    document.getElementById(
+        "expenseDate"
+    ).value = today();
+
+
+    document.getElementById(
+        "expenseCategory"
+    ).value = "";
+
+
+    document.getElementById(
+        "expenseDescription"
+    ).value = "";
+
+
+    document.getElementById(
+        "expenseAmount"
+    ).value = "";
+
+
+    document.getElementById(
+        "paymentMode"
+    ).value = "CASH";
+
+
+    document.getElementById(
+        "saveBtn"
+    ).textContent =
+        "💾 Save Expense";
+
+}
+
+
+/* =========================================================
+   SAVE EXPENSE
+========================================================= */
+
+async function saveExpense() {
+
+    try {
+
+        const date =
+            document.getElementById(
+                "expenseDate"
+            ).value;
+
+
+        const category =
+            document.getElementById(
+                "expenseCategory"
+            ).value;
+
+
+        const description =
+            document.getElementById(
+                "expenseDescription"
+            ).value.trim();
+
+
+        const amount =
+            Number(
+                document.getElementById(
+                    "expenseAmount"
+                ).value
+            );
+
+
+        const paymentMode =
+            document.getElementById(
+                "paymentMode"
+            ).value;
+
+
+        if (!date) {
+
+            showMessage(
+                "Please select expense date.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if (!category) {
+
+            showMessage(
+                "Please select category.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if (
+            !amount ||
+            amount <= 0
+        ) {
+
+            showMessage(
+                "Please enter valid amount.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        const payload = {
+
+            expense_date: date,
+
+            category: category,
+
+            description:
+                description || null,
+
+            amount: amount,
+
+            payment_mode:
+                paymentMode
+
+        };
+
+
+        /* ================= UPDATE ================= */
+
+        if (editingExpenseId) {
+
+            const {
+                error
+            } =
+                await supabaseClient
+                    .from("expenses")
+                    .update(payload)
+                    .eq(
+                        "id",
+                        editingExpenseId
+                    );
+
+
+            if (error)
+                throw error;
+
+
+            showMessage(
+                "Expense updated successfully."
+            );
+
+        }
+
+
+        /* ================= INSERT ================= */
+
+        else {
+
+            const {
+                error
+            } =
+                await supabaseClient
+                    .from("expenses")
+                    .insert([
+                        payload
+                    ]);
+
+
+            if (error)
+                throw error;
+
+
+            showMessage(
+                "Expense saved successfully."
+            );
+
+        }
+
+
+        clearForm();
+
+        await loadExpenses();
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            error.message ||
+            "Unable to save expense.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   LOAD EXPENSES
+========================================================= */
+
+async function loadExpenses() {
+
+    try {
+
+        const from =
+            document.getElementById(
+                "fromDate"
+            ).value;
+
+
+        const to =
+            document.getElementById(
+                "toDate"
+            ).value;
+
+
+        const category =
+            document.getElementById(
+                "filterCategory"
+            ).value;
+
+
+        let query =
+            supabaseClient
+                .from("expenses")
+                .select("*")
+                .order(
+                    "expense_date",
+                    {
+                        ascending: false
+                    }
+                )
+                .order(
+                    "id",
+                    {
+                        ascending: false
+                    }
+                );
+
+
+        if (from) {
+
+            query =
+                query.gte(
+                    "expense_date",
+                    from
+                );
+
+        }
+
+
+        if (to) {
+
+            query =
+                query.lte(
+                    "expense_date",
+                    to
+                );
+
+        }
+
+
+        if (category) {
+
+            query =
+                query.eq(
+                    "category",
+                    category
+                );
+
+        }
+
+
+        const {
+            data,
+            error
+        } = await query;
+
+
+        if (error)
+            throw error;
+
+
+        expenses =
+            data || [];
+
+
+        renderExpenses();
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            error.message ||
+            "Unable to load expenses.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   RENDER TABLE
+========================================================= */
+
+function renderExpenses() {
+
+    const tbody =
+        document.getElementById(
+            "expenseTableBody"
+        );
+
+
+    if (!expenses.length) {
+
+        tbody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="7"
+                    class="empty">
+
+                    No expenses found.
+
+                </td>
+
+            </tr>
+
+        `;
+
+
+        updateSummary();
+
+        return;
+
+    }
+
+
+    tbody.innerHTML =
+        expenses.map(
+            (expense, index) => {
+
+                const date =
+                    expense.expense_date
+                    ? new Date(
+                        expense.expense_date
+                        + "T00:00:00"
+                    ).toLocaleDateString(
+                        "en-IN"
+                    )
+                    : "-";
+
+
+                return `
+
+                    <tr>
+
+                        <td>
+                            ${index + 1}
+                        </td>
+
+                        <td>
+                            ${safe(date)}
+                        </td>
+
+                        <td>
+                            <strong>
+                                ${safe(
+                                    expense.category
+                                )}
+                            </strong>
+                        </td>
+
+                        <td>
+                            ${
+                                safe(
+                                    expense.description
+                                ) || "-"
+                            }
+                        </td>
+
+                        <td class="amount">
+                            ${money(
+                                expense.amount
+                            )}
+                        </td>
+
+                        <td>
+                            <strong>
+                                ${safe(
+                                    expense.payment_mode
+                                )}
+                            </strong>
+                        </td>
+
+                        <td class="actions">
+
+                            <button
+                                class="small-btn btn-edit"
+                                onclick="editExpense(${expense.id})">
+
+                                Edit
+
+                            </button>
+
+
+                            <button
+                                class="small-btn btn-danger"
+                                onclick="deleteExpense(${expense.id})">
+
+                                Delete
+
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        ).join("");
+
+
+    updateSummary();
+
+}
+
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+function updateSummary() {
+
+    const total =
+        expenses.reduce(
+            (sum, item) =>
+                sum +
+                Number(
+                    item.amount || 0
+                ),
+            0
+        );
+
+
+    const count =
+        expenses.length;
+
+
+    const average =
+        count
+            ? total / count
+            : 0;
+
+
+    document.getElementById(
+        "totalExpense"
+    ).textContent =
+        money(total);
+
+
+    document.getElementById(
+        "expenseCount"
+    ).textContent =
+        count;
+
+
+    document.getElementById(
+        "averageExpense"
+    ).textContent =
+        money(average);
+
+}
+
+
+/* =========================================================
+   EDIT
+========================================================= */
+
+function editExpense(id) {
+
+    const expense =
+        expenses.find(
+            item =>
+                Number(item.id) ===
+                Number(id)
+        );
+
+
+    if (!expense)
+        return;
+
+
+    editingExpenseId =
+        expense.id;
+
+
+    document.getElementById(
+        "expenseDate"
+    ).value =
+        expense.expense_date ||
+        today();
+
+
+    document.getElementById(
+        "expenseCategory"
+    ).value =
+        expense.category || "";
+
+
+    document.getElementById(
+        "expenseDescription"
+    ).value =
+        expense.description || "";
+
+
+    document.getElementById(
+        "expenseAmount"
+    ).value =
+        expense.amount || "";
+
+
+    document.getElementById(
+        "paymentMode"
+    ).value =
+        expense.payment_mode ||
+        "CASH";
+
+
+    document.getElementById(
+        "saveBtn"
+    ).textContent =
+        "✏️ Update Expense";
+
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+}
+
+
+/* =========================================================
+   DELETE
+========================================================= */
+
+async function deleteExpense(id) {
+
+    if (
+        !confirm(
+            "Delete this expense?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from("expenses")
+                .delete()
+                .eq(
+                    "id",
+                    id
+                );
+
+
+        if (error)
+            throw error;
+
+
+        showMessage(
+            "Expense deleted successfully."
+        );
+
+
+        if (
+            Number(editingExpenseId) ===
+            Number(id)
+        ) {
+
+            clearForm();
+
+        }
+
+
+        await loadExpenses();
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            error.message ||
+            "Unable to delete expense.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   PRINT DATA
+========================================================= */
+
+function preparePrintData() {
+
+    const body =
+        document.getElementById(
+            "printTableBody"
+        );
+
+
+    const total =
+        expenses.reduce(
+            (sum, item) =>
+                sum +
+                Number(
+                    item.amount || 0
+                ),
+            0
+        );
+
+
+    body.innerHTML =
+        expenses.map(
+            (expense, index) => {
+
+                const date =
+                    expense.expense_date
+                    ? new Date(
+                        expense.expense_date
+                        + "T00:00:00"
+                    ).toLocaleDateString(
+                        "en-IN"
+                    )
+                    : "-";
+
+
+                return `
+
+                    <tr>
+
+                        <td style="
+                            border:1px solid #222;
+                            padding:8px;
+                        ">
+                            ${index + 1}
+                        </td>
+
+                        <td style="
+                            border:1px solid #222;
+                            padding:8px;
+                        ">
+                            ${safe(date)}
+                        </td>
+
+                        <td style="
+                            border:1px solid #222;
+                            padding:8px;
+                        ">
+                            ${safe(
+                                expense.category
+                            )}
+                        </td>
+
+                        <td style="
+                            border:1px solid #222;
+                            padding:8px;
+                        ">
+                            ${
+                                safe(
+                                    expense.description
+                                ) || "-"
+                            }
+                        </td>
+
+                        <td style="
+                            border:1px solid #222;
+                            padding:8px;
+                            text-align:right;
+                        ">
+                            ${pdfMoney(
+                                expense.amount
+                            )}
+                        </td>
+
+                        <td style="
+                            border:1px solid #222;
+                            padding:8px;
+                        ">
+                            ${safe(
+                                expense.payment_mode
+                            )}
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        ).join("");
+
+
+    document.getElementById(
+        "printTotal"
+    ).textContent =
+        pdfMoney(total);
+
+
+    const from =
+        document.getElementById(
+            "fromDate"
+        ).value;
+
+
+    const to =
+        document.getElementById(
+            "toDate"
+        ).value;
+
+
+    document.getElementById(
+        "printPeriod"
+    ).textContent =
+        from || to
+            ? `Period: ${from || "All"} to ${to || "All"}`
+            : `Generated: ${new Date().toLocaleDateString("en-IN")}`;
+
+}
+
+
+/* =========================================================
+   PRINT
+========================================================= */
+
+function printExpenses() {
+
+    preparePrintData();
+
+    window.print();
+
+}
+
+
+/* =========================================================
+   PDF
+========================================================= */
+
+function downloadPDF() {
+
+    try {
+
+        const {
+            jsPDF
+        } = window.jspdf;
+
+
+        const doc =
+            new jsPDF(
+                "p",
+                "mm",
+                "a4"
+            );
+
+
+        const total =
+            expenses.reduce(
+                (sum, item) =>
+                    sum +
+                    Number(
+                        item.amount || 0
+                    ),
+                0
+            );
+
+
+        /* HEADER */
+
+        doc.setFont(
+            "helvetica",
+            "bold"
+        );
+
+        doc.setFontSize(20);
+
+        doc.text(
+            "BOMBAY NX",
+            105,
+            18,
+            {
+                align: "center"
+            }
+        );
+
+
+        doc.setFontSize(14);
+
+        doc.text(
+            "EXPENSE REPORT",
+            105,
+            27,
+            {
+                align: "center"
+            }
+        );
+
+
+        doc.setFont(
+            "helvetica",
+            "normal"
+        );
+
+        doc.setFontSize(9);
+
+
+        const from =
+            document.getElementById(
+                "fromDate"
+            ).value;
+
+
+        const to =
+            document.getElementById(
+                "toDate"
+            ).value;
+
+
+        const period =
+            from || to
+                ? `Period: ${from || "All"} to ${to || "All"}`
+                : `Generated: ${new Date().toLocaleDateString("en-IN")}`;
+
+
+        doc.text(
+            period,
+            105,
+            34,
+            {
+                align: "center"
+            }
+        );
+
+
+        /* TOTAL */
+
+        doc.setFont(
+            "helvetica",
+            "bold"
+        );
+
+        doc.setFontSize(11);
+
+        doc.text(
+            "Total Expense: " +
+            pdfMoney(total),
+            14,
+            44
+        );
+
+
+        /* ROWS */
+
+        const rows =
+            expenses.map(
+                (expense, index) => {
+
+                    const date =
+                        expense.expense_date
+                        ? new Date(
+                            expense.expense_date
+                            + "T00:00:00"
+                        ).toLocaleDateString(
+                            "en-IN"
+                        )
+                        : "-";
+
+
+                    return [
+
+                        String(
+                            index + 1
+                        ),
+
+                        date,
+
+                        safe(
+                            expense.category
+                        ),
+
+                        safe(
+                            expense.description
+                        ) || "-",
+
+                        pdfMoney(
+                            expense.amount
+                        ),
+
+                        safe(
+                            expense.payment_mode
+                        )
+
+                    ];
+
+                }
+            );
+
+
+        /* TABLE */
+
+        doc.autoTable({
+
+            startY: 50,
+
+            head: [[
+                "#",
+                "Date",
+                "Category",
+                "Description",
+                "Amount",
+                "Payment Mode"
+            ]],
+
+            body: rows,
+
+            theme: "grid",
+
+            styles: {
+
+                font: "helvetica",
+
+                fontSize: 8,
+
+                cellPadding: 3
+
+            },
+
+            headStyles: {
+
+                font: "helvetica",
+
+                fontStyle: "bold",
+
+                fontSize: 8,
+
+                fillColor: [
+                    55,
+                    55,
+                    55
+                ],
+
+                textColor: [
+                    255,
+                    255,
+                    255
+                ]
+
+            },
+
+            columnStyles: {
+
+                0: {
+                    halign: "center",
+                    cellWidth: 10
+                },
+
+                1: {
+                    cellWidth: 25
+                },
+
+                2: {
+                    cellWidth: 32
+                },
+
+                3: {
+                    cellWidth: 62
+                },
+
+                4: {
+                    halign: "right",
+                    cellWidth: 32
+                },
+
+                5: {
+                    cellWidth: 28
+                }
+
+            }
+
+        });
+
+
+        /* BOTTOM TOTAL */
+
+        const finalY =
+            doc.lastAutoTable
+                ? doc.lastAutoTable.finalY + 12
+                : 70;
+
+
+        doc.setFont(
+            "helvetica",
+            "bold"
+        );
+
+        doc.setFontSize(11);
+
+        doc.text(
+            "Total Expense: " +
+            pdfMoney(total),
+            14,
+            finalY
+        );
+
+
+        /* FOOTER */
+
+        doc.setFont(
+            "helvetica",
+            "normal"
+        );
+
+        doc.setFontSize(8);
+
+        doc.text(
+            "BOMBAY NX - Expense Report",
+            105,
+            288,
+            {
+                align: "center"
+            }
+        );
+
+
+        /* SAVE */
+
+        doc.save(
+            "BOMBAY-NX-expense-Report.pdf"
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            "PDF could not be generated.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+async function init() {
+
+    const loggedIn =
+        await checkLogin();
+
+
+    if (!loggedIn)
+        return;
+
+
+    document.getElementById(
+        "expenseDate"
+    ).value =
+        today();
+
+
+    await loadExpenses();
+
+}
+
+
+init();
+
+</script>
+
+</body>
+
+</html>

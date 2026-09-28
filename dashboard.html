@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BOMBAY NX | Dashboard</title>
+
+    <!-- SUPABASE -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f1eb;
+            color: #292722;
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+
+        .topbar {
+            background: #292722;
+            color: white;
+            min-height: 74px;
+            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.12);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-logo {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #d8b56a, #b68b3d);
+            color: #292722;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .brand-text h1 {
+            font-size: 21px;
+            letter-spacing: 1.5px;
+        }
+
+        .brand-text p {
+            font-size: 11px;
+            color: #d8d2c7;
+            margin-top: 3px;
+            letter-spacing: 0.5px;
+        }
+
+        .owner-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .owner-info {
+            text-align: right;
+        }
+
+        .owner-label {
+            font-size: 11px;
+            color: #bdb6aa;
+        }
+
+        .owner-name {
+            font-size: 14px;
+            font-weight: 700;
+            margin-top: 3px;
+        }
+
+        .logout-btn {
+            border: 1px solid #625d54;
+            background: transparent;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: #3b3832;
+        }
+
+        /* PAGE */
+
+        .container {
+            max-width: 1400px;
+            margin: auto;
+            padding: 30px;
+        }
+
+        .welcome {
+            margin-bottom: 25px;
+        }
+
+        .welcome h2 {
+            font-size: 25px;
+            color: #292722;
+        }
+
+        .welcome p {
+            color: #777168;
+            font-size: 13px;
+            margin-top: 7px;
+        }
+
+        /* STAT CARDS */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 34px;
+        }
+
+        .stat-card {
+            position: relative;
+            border-radius: 18px;
+            padding: 23px;
+            min-height: 155px;
+            border: 1px solid #e5ded3;
+            box-shadow: 0 6px 20px rgba(70, 55, 35, 0.06);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 9px 25px rgba(70, 55, 35, 0.10);
+        }
+
+        .sales-today {
+            background: #fffaf0;
+        }
+
+        .expense-today {
+            background: #fff7f5;
+        }
+
+        .sales-month {
+            background: #faf8f1;
+        }
+
+        .expense-month {
+            background: #f7f7f5;
+        }
+
+        .stat-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-title {
+            font-size: 13px;
+            color: #6f685e;
+            font-weight: 600;
+        }
+
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: rgba(255, 255, 255, 0.75);
+            border: 1px solid rgba(150, 130, 100, 0.13);
+        }
+
+        .stat-amount {
+            margin-top: 22px;
+            font-size: 27px;
+            font-weight: 800;
+            color: #292722;
+        }
+
+        .stat-period {
+            margin-top: 7px;
+            color: #8a8277;
+            font-size: 11px;
+        }
+
+        .gold-line {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(
+                90deg,
+                #d4ae64,
+                #ead5a4,
+                transparent
+            );
+        }
+
+        /* SECTION */
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .section-title h3 {
+            font-size: 18px;
+            color: #292722;
+        }
+
+        .section-title span {
+            font-size: 12px;
+            color: #81796f;
+        }
+
+        /* QUICK ACCESS */
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .quick-card {
+            background: #302e29;
+            color: white;
+            border: 1px solid #454139;
+            border-radius: 15px;
+            min-height: 95px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 5px 15px rgba(30, 25, 20, 0.10);
+        }
+
+        .quick-card:hover {
+            transform: translateY(-2px);
+            background: #39362f;
+        }
+
+        .quick-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            background: #f1e4c9;
+            color: #51432d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+            flex-shrink: 0;
+        }
+
+        .quick-content h4 {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .quick-content p {
+            color: #bcb6ac;
+            font-size: 11px;
+        }
+
+        .arrow {
+            margin-left: auto;
+            color: #d8b56a;
+            font-size: 19px;
+        }
+
+        .loading {
+            opacity: 0.6;
+        }
+
+        .footer {
+            text-align: center;
+            color: #8c847a;
+            font-size: 11px;
+            margin-top: 38px;
+            padding-bottom: 20px;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 1050px) {
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .quick-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 650px) {
+
+            .topbar {
+                padding: 13px 16px;
+            }
+
+            .brand-text h1 {
+                font-size: 18px;
+            }
+
+            .owner-info {
+                display: none;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            .welcome h2 {
+                font-size: 21px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 13px;
+            }
+
+            .stat-card {
+                min-height: 140px;
+            }
+
+            .quick-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-card {
+                min-height: 82px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+
+    <header class="topbar">
+
+        <div class="brand">
+
+            <div class="brand-logo">
+                BN
+            </div>
+
+            <div class="brand-text">
+                <h1>BOMBAY NX</h1>
+                <p>PREMIUM MENSWEAR • ACCOUNTING</p>
+            </div>
+
+        </div>
+
+        <div class="owner-area">
+
+            <div class="owner-info">
+                <div class="owner-label">
+                    Logged in as
+                </div>
+
+                <div class="owner-name" id="ownerName">
+                    Owner
+                </div>
+            </div>
+
+            <button
+                class="logout-btn"
+                onclick="logout()">
+                Logout
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- MAIN -->
+
+    <main class="container">
+
+        <div class="welcome">
+
+            <h2>
+                Welcome back,
+                <span id="welcomeName">
+                    Owner
+                </span>
+            </h2>
+
+            <p>
+                Manage your sales, expenses and business operations from one place.
+            </p>
+
+        </div>
+
+
+        <!-- STAT CARDS -->
+
+        <div class="stats-grid">
+
+            <!-- TODAY SALES -->
+
+            <div class="stat-card sales-today">
+
+                <div class="stat-top">
+
+                    <div class="stat-title">
+                        Today Sales
+                    </div>
+
+                    <div class="stat-icon">
+                        💰
+                    </div>
+
+                </div>
+
+                <div
+                    class="stat-amount loading"
+                    id="todaySales">
+                    ₹0.00
+                </div>
+
+                <div class="stat-period">
+                    Business Day • 6:00 AM – 5:59 AM
+                </div>
+
+                <div class="gold-line"></div>
+
+            </div>
+
+
+            <!-- TODAY EXPENSE -->
+
+            <div class="stat-card expense-today">
+
+                <div class="stat-top">
+
+                    <div class="stat-title">
+                        Today Expense
+                    </div>
+
+                    <div class="stat-icon">
+                        💸
+                    </div>
+
+                </div>
+
+                <div
+                    class="stat-amount loading"
+                    id="todayExpense">
+                    ₹0.00
+                </div>
+
+                <div class="stat-period">
+                    Current Business Day
+                </div>
+
+                <div class="gold-line"></div>
+
+            </div>
+
+
+            <!-- MONTHLY SALES -->
+
+            <div class="stat-card sales-month">
+
+                <div class="stat-top">
+
+                    <div class="stat-title">
+                        Monthly Sales
+                    </div>
+
+                    <div class="stat-icon">
+                        📅
+                    </div>
+
+                </div>
+
+                <div
+                    class="stat-amount loading"
+                    id="monthlySales">
+                    ₹0.00
+                </div>
+
+                <div class="stat-period">
+                    1st of this month – Today
+                </div>
+
+                <div class="gold-line"></div>
+
+            </div>
+
+
+            <!-- MONTHLY EXPENSE -->
+
+            <div class="stat-card expense-month">
+
+                <div class="stat-top">
+
+                    <div class="stat-title">
+                        Monthly Expense
+                    </div>
+
+                    <div class="stat-icon">
+                        💼
+                    </div>
+
+                </div>
+
+                <div
+                    class="stat-amount loading"
+                    id="monthlyExpense">
+                    ₹0.00
+                </div>
+
+                <div class="stat-period">
+                    Current Calendar Month
+                </div>
+
+                <div class="gold-line"></div>
+
+            </div>
+
+        </div>
+
+
+        <!-- QUICK ACCESS -->
+
+        <div class="section-title">
+
+            <h3>
+                Quick Access
+            </h3>
+
+            <span>
+                BOMBAY NX
+            </span>
+
+        </div>
+
+
+        <div class="quick-grid">
+
+            <!-- NEW BILL -->
+
+            <div
+                class="quick-card"
+                onclick="goTo('billing.html')">
+
+                <div class="quick-icon">
+                    🧾
+                </div>
+
+                <div class="quick-content">
+                    <h4>New Bill</h4>
+                    <p>Create customer invoice</p>
+                </div>
+
+                <div class="arrow">
+                    ›
+                </div>
+
+            </div>
+
+
+            <!-- CUSTOMER ACCOUNT -->
+
+            <div
+                class="quick-card"
+                onclick="goTo('customer-account.html')">
+
+                <div class="quick-icon">
+                    👥
+                </div>
+
+                <div class="quick-content">
+                    <h4>Customer Account</h4>
+                    <p>View customer bills & pending</p>
+                </div>
+
+                <div class="arrow">
+                    ›
+                </div>
+
+            </div>
+
+
+            <!-- SUPPLIER ACCOUNT -->
+
+            <div
+                class="quick-card"
+                onclick="goTo('supplier-account.html')">
+
+                <div class="quick-icon">
+                    🏭
+                </div>
+
+                <div class="quick-content">
+                    <h4>Supplier Account</h4>
+                    <p>Purchases, payments & pending</p>
+                </div>
+
+                <div class="arrow">
+                    ›
+                </div>
+
+            </div>
+
+
+            <!-- REPORTS -->
+
+            <div
+                class="quick-card"
+                onclick="goTo('reports.html')">
+
+                <div class="quick-icon">
+                    📊
+                </div>
+
+                <div class="quick-content">
+                    <h4>Reports</h4>
+                    <p>Business & accounting reports</p>
+                </div>
+
+                <div class="arrow">
+                    ›
+                </div>
+
+            </div>
+
+
+            <!-- EXPENSES -->
+
+            <div
+                class="quick-card"
+                onclick="goTo('expenses.html')">
+
+                <div class="quick-icon">
+                    💸
+                </div>
+
+                <div class="quick-content">
+                    <h4>Expenses</h4>
+                    <p>Manage business expenses</p>
+                </div>
+
+                <div class="arrow">
+                    ›
+                </div>
+
+            </div>
+
+
+            <!-- SETTINGS -->
+
+            <div
+                class="quick-card"
+                onclick="goTo('settings.html')">
+
+                <div class="quick-icon">
+                    ⚙️
+                </div>
+
+                <div class="quick-content">
+                    <h4>Settings</h4>
+                    <p>Shop, owner & account settings</p>
+                </div>
+
+                <div class="arrow">
+                    ›
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer">
+            © BOMBAY NX • Premium Menswear Accounting System
+        </div>
+
+    </main>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script>
+
+        /* SUPABASE */
+
+        const SUPABASE_URL =
+            "https://tetihwttelthoyeidwhl.supabase.co";
+
+        const SUPABASE_KEY =
+            "sb_publishable_RoeCtLr9AhiOqKJq_zMXOA_txz_hOy7";
+
+        const supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_KEY
+            );
+
+
+        /* CURRENCY */
+
+        function formatMoney(value) {
+
+            const number =
+                Number(value || 0);
+
+            return "₹" +
+                number.toLocaleString(
+                    "en-IN",
+                    {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }
+                );
+        }
+
+
+        /* NAVIGATION */
+
+        function goTo(page) {
+            window.location.href = page;
+        }
+
+
+        /* DATE HELPERS */
+
+        function getBusinessDayStart() {
+
+            const now = new Date();
+
+            const start =
+                new Date(now);
+
+            if (now.getHours() < 6) {
+
+                start.setDate(
+                    start.getDate() - 1
+                );
+            }
+
+            start.setHours(
+                6,
+                0,
+                0,
+                0
+            );
+
+            return start;
+        }
+
+
+        function getMonthStart() {
+
+            const now = new Date();
+
+            return new Date(
+                now.getFullYear(),
+                now.getMonth(),
+                1,
+                0,
+                0,
+                0,
+                0
+            );
+        }
+
+
+        /* SALES */
+
+        async function getSalesTotal(
+            startDate
+        ) {
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient
+                    .from("sales")
+                    .select("final_amount")
+                    .gte(
+                        "created_at",
+                        startDate.toISOString()
+                    )
+                    .lte(
+                        "created_at",
+                        new Date().toISOString()
+                    );
+
+            if (error) {
+
+                console.error(
+                    "Sales Error:",
+                    error
+                );
+
+                return 0;
+            }
+
+            return (data || [])
+                .reduce(
+                    (total, row) =>
+                        total +
+                        Number(
+                            row.final_amount || 0
+                        ),
+                    0
+                );
+        }
+
+
+        /* EXPENSE */
+
+        async function getExpenseTotal(
+            startDate
+        ) {
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient
+                    .from("expenses")
+                    .select("amount")
+                    .gte(
+                        "created_at",
+                        startDate.toISOString()
+                    )
+                    .lte(
+                        "created_at",
+                        new Date().toISOString()
+                    );
+
+            if (error) {
+
+                console.error(
+                    "Expense Error:",
+                    error
+                );
+
+                return 0;
+            }
+
+            return (data || [])
+                .reduce(
+                    (total, row) =>
+                        total +
+                        Number(
+                            row.amount || 0
+                        ),
+                    0
+                );
+        }
+
+
+        /* LOAD DASHBOARD */
+
+        async function loadDashboard() {
+
+            try {
+
+                const {
+                    data: sessionData
+                } =
+                    await supabaseClient
+                        .auth
+                        .getSession();
+
+                const session =
+                    sessionData.session;
+
+                if (!session) {
+
+                    window.location.href =
+                        "owner-login.html";
+
+                    return;
+                }
+
+
+                /* OWNER PROFILE */
+
+                const {
+                    data: profile,
+                    error: profileError
+                } =
+                    await supabaseClient
+                        .from("owner_profile")
+                        .select(
+                            "owner_name, shop_name"
+                        )
+                        .eq(
+                            "id",
+                            session.user.id
+                        )
+                        .maybeSingle();
+
+
+                if (
+                    profileError ||
+                    !profile
+                ) {
+
+                    console.error(
+                        "Owner Profile Error:",
+                        profileError
+                    );
+
+                    const fallbackName =
+                        session.user.email ||
+                        "Owner";
+
+                    document.getElementById(
+                        "ownerName"
+                    ).textContent =
+                        fallbackName;
+
+                    document.getElementById(
+                        "welcomeName"
+                    ).textContent =
+                        fallbackName;
+
+                } else {
+
+                    const name =
+                        profile.owner_name ||
+                        "Owner";
+
+                    document.getElementById(
+                        "ownerName"
+                    ).textContent =
+                        name;
+
+                    document.getElementById(
+                        "welcomeName"
+                    ).textContent =
+                        name;
+                }
+
+
+                /* DATE RANGES */
+
+                const todayStart =
+                    getBusinessDayStart();
+
+                const monthStart =
+                    getMonthStart();
+
+
+                /* LOAD CARDS */
+
+                const [
+                    todaySales,
+                    todayExpense,
+                    monthlySales,
+                    monthlyExpense
+                ] =
+                    await Promise.all([
+
+                        getSalesTotal(
+                            todayStart
+                        ),
+
+                        getExpenseTotal(
+                            todayStart
+                        ),
+
+                        getSalesTotal(
+                            monthStart
+                        ),
+
+                        getExpenseTotal(
+                            monthStart
+                        )
+
+                    ]);
+
+
+                /* DISPLAY */
+
+                document.getElementById(
+                    "todaySales"
+                ).textContent =
+                    formatMoney(
+                        todaySales
+                    );
+
+                document.getElementById(
+                    "todayExpense"
+                ).textContent =
+                    formatMoney(
+                        todayExpense
+                    );
+
+                document.getElementById(
+                    "monthlySales"
+                ).textContent =
+                    formatMoney(
+                        monthlySales
+                    );
+
+                document.getElementById(
+                    "monthlyExpense"
+                ).textContent =
+                    formatMoney(
+                        monthlyExpense
+                    );
+
+
+                /* REMOVE LOADING */
+
+                document
+                    .querySelectorAll(
+                        ".loading"
+                    )
+                    .forEach(
+                        element => {
+
+                            element.classList
+                                .remove(
+                                    "loading"
+                                );
+                        }
+                    );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Dashboard Error:",
+                    error
+                );
+            }
+        }
+
+
+        /* LOGOUT */
+
+        async function logout() {
+
+            try {
+
+                await supabaseClient
+                    .auth
+                    .signOut();
+
+                window.location.href =
+                    "owner-login.html";
+
+            } catch (error) {
+
+                console.error(
+                    "Logout Error:",
+                    error
+                );
+            }
+        }
+
+
+        /* START */
+
+        loadDashboard();
+
+    </script>
+
+</body>
+
+</html>

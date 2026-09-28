@@ -1,0 +1,2515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Settings | BOMBAY NX</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f5f1e8;
+    color:#202020;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+header{
+    background:#171717;
+    color:#fff;
+    padding:18px 25px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    position:sticky;
+    top:0;
+    z-index:100;
+}
+
+.brand{
+    font-size:25px;
+    font-weight:900;
+    letter-spacing:1px;
+}
+
+.brand span{
+    color:#c9a227;
+}
+
+.back-btn{
+    border:1px solid #c9a227;
+    background:transparent;
+    color:#c9a227;
+
+    padding:9px 16px;
+    border-radius:8px;
+
+    cursor:pointer;
+    font-weight:700;
+}
+
+.back-btn:hover{
+    background:#c9a227;
+    color:#171717;
+}
+
+
+/* =========================
+   MAIN
+========================= */
+
+.container{
+    width:min(1050px,94%);
+    margin:30px auto 70px;
+}
+
+.page-title{
+    margin-bottom:25px;
+}
+
+.page-title h1{
+    margin:0;
+    font-size:31px;
+}
+
+.page-title p{
+    margin:7px 0 0;
+    color:#777;
+}
+
+
+/* =========================
+   CARD
+========================= */
+
+.card{
+    background:#fff;
+
+    border:1px solid #e4dfd4;
+    border-radius:14px;
+
+    padding:24px;
+    margin-bottom:22px;
+
+    box-shadow:
+        0 5px 18px rgba(0,0,0,.07);
+}
+
+.card-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    border-bottom:1px solid #e7e1d7;
+
+    padding-bottom:15px;
+    margin-bottom:20px;
+}
+
+.card-header h2{
+    margin:0;
+    font-size:20px;
+}
+
+.section-number{
+    width:35px;
+    height:35px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:#171717;
+    color:#c9a227;
+
+    font-weight:900;
+}
+
+
+/* =========================
+   FORM
+========================= */
+
+.grid{
+    display:grid;
+    grid-template-columns:
+        repeat(2,minmax(0,1fr));
+
+    gap:16px;
+}
+
+.field{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+.field.full{
+    grid-column:1/-1;
+}
+
+label{
+    font-size:13px;
+    font-weight:700;
+    color:#555;
+}
+
+input,
+textarea{
+    width:100%;
+
+    border:1px solid #d7d1c5;
+
+    background:#fffdf9;
+    color:#222;
+
+    padding:12px 13px;
+
+    border-radius:8px;
+
+    font-size:15px;
+
+    outline:none;
+}
+
+input:focus,
+textarea:focus{
+    border-color:#c9a227;
+
+    box-shadow:
+        0 0 0 2px
+        rgba(201,162,39,.12);
+}
+
+textarea{
+    min-height:100px;
+    resize:vertical;
+}
+
+
+/* =========================
+   BUTTONS
+========================= */
+
+.actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:20px;
+}
+
+.btn{
+    border:none;
+
+    border-radius:8px;
+
+    padding:11px 17px;
+
+    cursor:pointer;
+
+    font-weight:800;
+    font-size:14px;
+}
+
+.btn-gold{
+    background:#c9a227;
+    color:#171717;
+}
+
+.btn-gold:hover{
+    background:#b18e1e;
+}
+
+.btn-danger{
+    background:#a12626;
+    color:#fff;
+}
+
+.btn-danger:hover{
+    background:#821d1d;
+}
+
+.btn-dark{
+    background:#171717;
+    color:#fff;
+}
+
+.btn-light{
+    background:#eee9df;
+    color:#222;
+}
+
+
+/* =========================
+   ACCOUNT
+========================= */
+
+.account-box{
+    background:#171717;
+    color:#fff;
+
+    border-radius:12px;
+    padding:20px;
+}
+
+.account-row{
+    display:flex;
+    justify-content:space-between;
+
+    gap:15px;
+
+    padding:12px 0;
+
+    border-bottom:1px solid #333;
+}
+
+.account-row:last-child{
+    border-bottom:none;
+}
+
+.account-label{
+    color:#aaa;
+    font-size:13px;
+}
+
+.account-value{
+    font-weight:700;
+    text-align:right;
+}
+
+
+/* =========================
+   OWNER LIST
+========================= */
+
+.owner-list{
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,minmax(0,1fr));
+
+    gap:18px;
+}
+
+.owner-box{
+    background:#fffdf9;
+
+    border:1px solid #ddd6ca;
+
+    border-radius:12px;
+
+    padding:20px;
+}
+
+.owner-box.active{
+    border-color:#c9a227;
+}
+
+.owner-box.empty{
+    border-style:dashed;
+}
+
+.owner-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    gap:10px;
+
+    margin-bottom:16px;
+}
+
+.owner-title{
+    font-size:18px;
+    font-weight:900;
+}
+
+.owner-badge{
+    background:#171717;
+    color:#c9a227;
+
+    padding:6px 10px;
+
+    border-radius:20px;
+
+    font-size:11px;
+    font-weight:900;
+}
+
+.owner-info{
+    color:#555;
+    font-size:14px;
+
+    line-height:1.9;
+}
+
+.owner-info strong{
+    color:#222;
+}
+
+.owner-status{
+    margin-top:12px;
+
+    font-size:13px;
+    font-weight:800;
+}
+
+.status-active{
+    color:#218838;
+}
+
+.status-empty{
+    color:#999;
+}
+
+
+/* =========================
+   OWNER DELETE
+========================= */
+
+.owner-delete{
+    border-top:1px solid #e5dfd4;
+
+    margin-top:18px;
+    padding-top:16px;
+}
+
+.owner-delete button{
+    width:100%;
+
+    border:none;
+
+    background:#a12626;
+    color:#fff;
+
+    border-radius:8px;
+
+    padding:12px;
+
+    cursor:pointer;
+
+    font-weight:900;
+}
+
+.owner-delete button:hover{
+    background:#821d1d;
+}
+
+
+/* =========================
+   CLEAR DATA
+========================= */
+
+.danger-card{
+    border:1px solid #e5b7b7;
+}
+
+.warning-box{
+    background:#fff3f3;
+
+    border:1px solid #efc1c1;
+
+    border-radius:10px;
+
+    padding:16px;
+
+    color:#7d2222;
+
+    line-height:1.7;
+
+    font-size:14px;
+}
+
+.warning-box strong{
+    color:#8e1717;
+}
+
+.clear-button{
+    background:#8e1717;
+    color:#fff;
+
+    border:none;
+
+    border-radius:8px;
+
+    padding:13px 20px;
+
+    cursor:pointer;
+
+    font-weight:900;
+
+    font-size:14px;
+}
+
+.clear-button:hover{
+    background:#6f1111;
+}
+
+
+/* =========================
+   MESSAGE
+========================= */
+
+.message{
+    display:none;
+
+    padding:12px 15px;
+
+    border-radius:8px;
+
+    margin-top:15px;
+
+    font-size:14px;
+    font-weight:700;
+}
+
+.message.success{
+    display:block;
+
+    background:#e5f5e8;
+    color:#17652a;
+
+    border:1px solid #b8dfc0;
+}
+
+.message.error{
+    display:block;
+
+    background:#fdeaea;
+    color:#8b1e1e;
+
+    border:1px solid #efbcbc;
+}
+
+
+/* =========================
+   MODAL
+========================= */
+
+.modal{
+    display:none;
+
+    position:fixed;
+
+    inset:0;
+
+    background:
+        rgba(0,0,0,.65);
+
+    z-index:999;
+
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    width:min(500px,100%);
+
+    background:#fff;
+
+    border-radius:14px;
+
+    padding:25px;
+
+    box-shadow:
+        0 20px 60px
+        rgba(0,0,0,.25);
+}
+
+.modal-header{
+    display:flex;
+
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:20px;
+}
+
+.modal-header h3{
+    margin:0;
+}
+
+.close-btn{
+    border:none;
+
+    background:transparent;
+
+    font-size:25px;
+
+    cursor:pointer;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px){
+
+    header{
+        padding:15px;
+    }
+
+    .brand{
+        font-size:20px;
+    }
+
+    .container{
+        width:94%;
+    }
+
+    .card{
+        padding:18px;
+    }
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .field.full{
+        grid-column:auto;
+    }
+
+    .owner-list{
+        grid-template-columns:1fr;
+    }
+
+    .page-title h1{
+        font-size:25px;
+    }
+
+    .account-row{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .account-value{
+        text-align:left;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="brand">
+        BOMBAY <span>NX</span>
+    </div>
+
+    <button
+        class="back-btn"
+        onclick="goDashboard()">
+
+        ← Dashboard
+
+    </button>
+
+</header>
+
+
+
+<div class="container">
+
+
+    <div class="page-title">
+
+        <h1>⚙️ Settings</h1>
+
+        <p>
+            Manage your shop, owner accounts and data.
+        </p>
+
+    </div>
+
+
+
+    <!-- =========================
+         1 SHOP DETAILS
+    ========================== -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <h2>🏪 Shop Details</h2>
+
+            <div class="section-number">
+                1
+            </div>
+
+        </div>
+
+
+        <div class="grid">
+
+
+            <div class="field">
+
+                <label>
+                    Shop Name
+                </label>
+
+                <input
+                    id="shopName"
+                    type="text"
+                    placeholder="BOMBAY NX">
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Shop Mobile
+                </label>
+
+                <input
+                    id="shopMobile"
+                    type="tel"
+                    placeholder="Mobile number">
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Shop Email
+                </label>
+
+                <input
+                    id="shopEmail"
+                    type="email"
+                    placeholder="Shop email">
+
+            </div>
+
+
+            <div class="field full">
+
+                <label>
+                    Shop Address
+                </label>
+
+                <textarea
+                    id="shopAddress"
+                    placeholder="Enter shop address"></textarea>
+
+            </div>
+
+        </div>
+
+
+        <div class="actions">
+
+            <button
+                class="btn btn-gold"
+                onclick="saveShopDetails()">
+
+                💾 Save Shop Details
+
+            </button>
+
+        </div>
+
+
+        <div
+            id="shopMessage"
+            class="message">
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         2 OWNER DETAILS
+    ========================== -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <h2>👤 Owner Details</h2>
+
+            <div class="section-number">
+                2
+            </div>
+
+        </div>
+
+
+        <div class="grid">
+
+
+            <div class="field">
+
+                <label>
+                    Owner Name
+                </label>
+
+                <input
+                    id="ownerName"
+                    type="text"
+                    placeholder="Owner name">
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Owner Mobile
+                </label>
+
+                <input
+                    id="ownerMobile"
+                    type="tel"
+                    placeholder="Owner mobile">
+
+            </div>
+
+
+            <div class="field full">
+
+                <label>
+                    Owner Email
+                </label>
+
+                <input
+                    id="ownerEmail"
+                    type="email"
+                    readonly>
+
+            </div>
+
+        </div>
+
+
+        <div class="actions">
+
+            <button
+                class="btn btn-gold"
+                onclick="saveOwnerDetails()">
+
+                💾 Save Owner Details
+
+            </button>
+
+        </div>
+
+
+        <div
+            id="ownerMessage"
+            class="message">
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         3 ACCOUNT
+    ========================== -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <h2>
+                🔐 Account / Password
+            </h2>
+
+            <div class="section-number">
+                3
+            </div>
+
+        </div>
+
+
+        <div class="account-box">
+
+
+            <div class="account-row">
+
+                <div class="account-label">
+                    Login Email
+                </div>
+
+                <div
+                    class="account-value"
+                    id="accountEmail">
+
+                    -
+
+                </div>
+
+            </div>
+
+
+            <div class="account-row">
+
+                <div class="account-label">
+                    Account Status
+                </div>
+
+                <div
+                    class="account-value"
+                    style="color:#c9a227;">
+
+                    OWNER
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="actions">
+
+
+            <button
+                class="btn btn-gold"
+                onclick="openPasswordModal()">
+
+                🔑 Change Password
+
+            </button>
+
+
+            <button
+                class="btn btn-danger"
+                onclick="logout()">
+
+                🚪 Logout
+
+            </button>
+
+
+        </div>
+
+
+        <div
+            id="accountMessage"
+            class="message">
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         4 OWNER MANAGEMENT
+    ========================== -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <h2>
+                👥 Owner Management
+            </h2>
+
+            <div class="section-number">
+                4
+            </div>
+
+        </div>
+
+
+        <div
+            id="ownerList"
+            class="owner-list">
+
+            Loading owners...
+
+        </div>
+
+
+        <div class="actions">
+
+            <button
+                id="addOwnerBtn"
+                class="btn btn-gold"
+                onclick="openOwnerModal()">
+
+                + Add Owner
+
+            </button>
+
+        </div>
+
+
+        <div
+            id="managementMessage"
+            class="message">
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         5 CLEAR ALL DATA
+    ========================== -->
+
+    <div class="card danger-card">
+
+        <div class="card-header">
+
+            <h2>
+                🗑️ Data Management
+            </h2>
+
+            <div
+                class="section-number"
+                style="
+                    background:#8e1717;
+                    color:#fff;
+                ">
+
+                5
+
+            </div>
+
+        </div>
+
+
+        <div class="warning-box">
+
+            <strong>
+                ⚠️ Permanent Data Deletion
+            </strong>
+
+            <br><br>
+
+            Clear All Data will permanently remove
+            BOMBAY NX business data from Supabase:
+
+            <br><br>
+
+            • Bills / Sales<br>
+            • Sale Items<br>
+            • Customer Payments<br>
+            • Purchases<br>
+            • Purchase Items<br>
+            • Supplier Payments<br>
+            • Expenses<br>
+            • Products / Stock<br>
+            • Stock Categories<br>
+            • Item Master<br>
+            • Suppliers<br>
+            • Supplier Returns
+
+            <br><br>
+
+            <strong>
+                Owner login accounts and owner profiles
+                will NOT be deleted.
+            </strong>
+
+        </div>
+
+
+        <div class="actions">
+
+            <button
+                class="clear-button"
+                onclick="clearAllData()">
+
+                🗑️ Clear All Data
+
+            </button>
+
+        </div>
+
+
+        <div
+            id="clearDataMessage"
+            class="message">
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =========================
+     PASSWORD MODAL
+========================= -->
+
+<div
+    id="passwordModal"
+    class="modal">
+
+    <div class="modal-box">
+
+
+        <div class="modal-header">
+
+            <h3>
+                🔑 Change Password
+            </h3>
+
+            <button
+                class="close-btn"
+                onclick="closePasswordModal()">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+        <div class="field">
+
+            <label>
+                New Password
+            </label>
+
+            <input
+                id="newPassword"
+                type="password"
+                placeholder="Minimum 6 characters">
+
+        </div>
+
+
+        <div
+            class="field"
+            style="margin-top:15px;">
+
+            <label>
+                Confirm Password
+            </label>
+
+            <input
+                id="confirmPassword"
+                type="password"
+                placeholder="Repeat password">
+
+        </div>
+
+
+        <div class="actions">
+
+            <button
+                class="btn btn-gold"
+                onclick="changePassword()">
+
+                Update Password
+
+            </button>
+
+
+            <button
+                class="btn btn-light"
+                onclick="closePasswordModal()">
+
+                Cancel
+
+            </button>
+
+        </div>
+
+
+        <div
+            id="passwordMessage"
+            class="message">
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     ADD OWNER MODAL
+========================= -->
+
+<div
+    id="ownerModal"
+    class="modal">
+
+    <div class="modal-box">
+
+
+        <div class="modal-header">
+
+            <h3>
+                👥 Add Owner
+            </h3>
+
+            <button
+                class="close-btn"
+                onclick="closeOwnerModal()">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+        <div class="field">
+
+            <label>
+                Owner Name
+            </label>
+
+            <input
+                id="newOwnerName"
+                type="text"
+                placeholder="Owner name">
+
+        </div>
+
+
+        <div
+            class="field"
+            style="margin-top:15px;">
+
+            <label>
+                Mobile
+            </label>
+
+            <input
+                id="newOwnerMobile"
+                type="tel"
+                placeholder="Mobile number">
+
+        </div>
+
+
+        <div
+            class="field"
+            style="margin-top:15px;">
+
+            <label>
+                Email
+            </label>
+
+            <input
+                id="newOwnerEmail"
+                type="email"
+                placeholder="Owner email">
+
+        </div>
+
+
+        <div
+            class="field"
+            style="margin-top:15px;">
+
+            <label>
+                Password
+            </label>
+
+            <input
+                id="newOwnerPassword"
+                type="password"
+                placeholder="Minimum 6 characters">
+
+        </div>
+
+
+        <div class="actions">
+
+            <button
+                class="btn btn-gold"
+                onclick="createOwner()">
+
+                Create Owner
+
+            </button>
+
+
+            <button
+                class="btn btn-light"
+                onclick="closeOwnerModal()">
+
+                Cancel
+
+            </button>
+
+        </div>
+
+
+        <div
+            id="newOwnerMessage"
+            class="message">
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+    "https://tetihwttelthoyeidwhl.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_RoeCtLr9AhiOqKJq_zMXOA_txz_hOy7";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+let currentUser = null;
+let currentProfile = null;
+
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function safe(value){
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        value == null
+            ? ""
+            : String(value);
+
+    return div.innerHTML;
+
+}
+
+
+function showMessage(
+    id,
+    text,
+    type="success"
+){
+
+    const el =
+        document.getElementById(id);
+
+    if(!el) return;
+
+    el.className =
+        "message " + type;
+
+    el.textContent =
+        text;
+
+
+    setTimeout(() => {
+
+        el.className =
+            "message";
+
+    },5000);
+
+}
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+function goDashboard(){
+
+    window.location.href =
+        "dashboard.html";
+
+}
+
+
+/* =====================================================
+   AUTH
+===================================================== */
+
+async function checkAuth(){
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+        .auth
+        .getUser();
+
+
+    if(
+        error ||
+        !data ||
+        !data.user
+    ){
+
+        window.location.href =
+            "owner-login.html";
+
+        return false;
+    }
+
+
+    currentUser =
+        data.user;
+
+
+    document.getElementById(
+        "accountEmail"
+    ).textContent =
+        currentUser.email || "-";
+
+
+    document.getElementById(
+        "ownerEmail"
+    ).value =
+        currentUser.email || "";
+
+
+    return true;
+
+}
+
+
+/* =====================================================
+   LOAD PROFILE
+===================================================== */
+
+async function loadProfile(){
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+        .from("owner_profile")
+        .select("*")
+        .eq(
+            "id",
+            currentUser.id
+        )
+        .maybeSingle();
+
+
+    if(error){
+
+        showMessage(
+            "ownerMessage",
+            error.message,
+            "error"
+        );
+
+        return;
+    }
+
+
+    if(!data){
+
+        showMessage(
+            "ownerMessage",
+            "Owner profile not found.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    currentProfile =
+        data;
+
+
+    document.getElementById(
+        "ownerName"
+    ).value =
+        data.owner_name || "";
+
+
+    document.getElementById(
+        "ownerMobile"
+    ).value =
+        data.mobile || "";
+
+
+    document.getElementById(
+        "ownerEmail"
+    ).value =
+        data.email ||
+        currentUser.email ||
+        "";
+
+
+    document.getElementById(
+        "shopName"
+    ).value =
+        data.shop_name ||
+        "BOMBAY NX";
+
+
+    document.getElementById(
+        "shopMobile"
+    ).value =
+        data.mobile || "";
+
+
+    document.getElementById(
+        "shopEmail"
+    ).value =
+        data.email ||
+        currentUser.email ||
+        "";
+
+
+    document.getElementById(
+        "shopAddress"
+    ).value =
+        data.shop_address || "";
+
+}
+
+
+/* =====================================================
+   SAVE SHOP
+===================================================== */
+
+async function saveShopDetails(){
+
+    const shopName =
+        document.getElementById(
+            "shopName"
+        ).value.trim();
+
+
+    const shopMobile =
+        document.getElementById(
+            "shopMobile"
+        ).value.trim();
+
+
+    const shopEmail =
+        document.getElementById(
+            "shopEmail"
+        ).value.trim();
+
+
+    const shopAddress =
+        document.getElementById(
+            "shopAddress"
+        ).value.trim();
+
+
+    if(!shopName){
+
+        showMessage(
+            "shopMessage",
+            "Please enter shop name.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const {
+        error
+    } =
+    await supabaseClient
+        .from("owner_profile")
+        .update({
+
+            shop_name:shopName,
+
+            mobile:shopMobile,
+
+            email:shopEmail,
+
+            shop_address:shopAddress
+
+        })
+        .eq(
+            "id",
+            currentUser.id
+        );
+
+
+    if(error){
+
+        showMessage(
+            "shopMessage",
+            error.message,
+            "error"
+        );
+
+        return;
+    }
+
+
+    showMessage(
+        "shopMessage",
+        "Shop details saved successfully."
+    );
+
+}
+
+
+/* =====================================================
+   SAVE OWNER
+===================================================== */
+
+async function saveOwnerDetails(){
+
+    const ownerName =
+        document.getElementById(
+            "ownerName"
+        ).value.trim();
+
+
+    const ownerMobile =
+        document.getElementById(
+            "ownerMobile"
+        ).value.trim();
+
+
+    if(!ownerName){
+
+        showMessage(
+            "ownerMessage",
+            "Please enter owner name.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const {
+        error
+    } =
+    await supabaseClient
+        .from("owner_profile")
+        .update({
+
+            owner_name:ownerName,
+
+            mobile:ownerMobile,
+
+            email:currentUser.email
+
+        })
+        .eq(
+            "id",
+            currentUser.id
+        );
+
+
+    if(error){
+
+        showMessage(
+            "ownerMessage",
+            error.message,
+            "error"
+        );
+
+        return;
+    }
+
+
+    showMessage(
+        "ownerMessage",
+        "Owner details saved successfully."
+    );
+
+
+    await loadOwners();
+
+}
+
+
+/* =====================================================
+   LOAD TWO OWNERS
+===================================================== */
+
+async function loadOwners(){
+
+    const list =
+        document.getElementById(
+            "ownerList"
+        );
+
+
+    list.innerHTML =
+        "Loading owners...";
+
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+        .from("owner_profile")
+        .select(
+            "id,owner_name,mobile,email,shop_name,owner_slot,created_at"
+        )
+        .order(
+            "created_at",
+            {
+                ascending:true
+            }
+        );
+
+
+    if(error){
+
+        list.innerHTML =
+            "Unable to load owners.";
+
+        showMessage(
+            "managementMessage",
+            error.message,
+            "error"
+        );
+
+        return;
+    }
+
+
+    const owners =
+        data || [];
+
+
+    list.innerHTML = "";
+
+
+    const owner1 =
+        owners[0] || null;
+
+    const owner2 =
+        owners[1] || null;
+
+
+    renderOwnerCard(
+        list,
+        owner1,
+        1
+    );
+
+
+    renderOwnerCard(
+        list,
+        owner2,
+        2
+    );
+
+
+    const addButton =
+        document.getElementById(
+            "addOwnerBtn"
+        );
+
+
+    if(owners.length >= 2){
+
+        addButton.style.display =
+            "none";
+
+    }
+    else{
+
+        addButton.style.display =
+            "inline-block";
+
+    }
+
+}
+
+
+/* =====================================================
+   RENDER OWNER
+===================================================== */
+
+function renderOwnerCard(
+    list,
+    owner,
+    number
+){
+
+    const box =
+        document.createElement("div");
+
+
+    if(owner){
+
+        box.className =
+            "owner-box active";
+
+
+        const isCurrent =
+            owner.id ===
+            currentUser.id;
+
+
+        box.innerHTML = `
+
+            <div class="owner-top">
+
+                <div class="owner-title">
+                    👤 Owner ${number}
+                </div>
+
+                <div class="owner-badge">
+                    ACTIVE
+                </div>
+
+            </div>
+
+
+            <div class="owner-info">
+
+                <div>
+                    <strong>Name:</strong>
+                    ${safe(owner.owner_name)}
+                </div>
+
+                <div>
+                    <strong>Mobile:</strong>
+                    ${safe(owner.mobile || "-")}
+                </div>
+
+                <div>
+                    <strong>Email:</strong>
+                    ${safe(owner.email || "-")}
+                </div>
+
+                <div>
+                    <strong>Shop:</strong>
+                    ${safe(
+                        owner.shop_name ||
+                        "BOMBAY NX"
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="owner-status status-active">
+                ● Active Owner
+            </div>
+
+
+            <div class="owner-delete">
+
+                <button
+                    onclick="deleteOwner(
+                        '${owner.id}',
+                        '${safe(owner.owner_name)}',
+                        ${isCurrent}
+                    )">
+
+                    🗑️ Delete Owner ${number}
+
+                </button>
+
+            </div>
+
+        `;
+
+    }
+    else{
+
+        box.className =
+            "owner-box empty";
+
+
+        box.innerHTML = `
+
+            <div class="owner-top">
+
+                <div class="owner-title">
+                    👤 Owner ${number}
+                </div>
+
+                <div class="owner-badge">
+                    EMPTY
+                </div>
+
+            </div>
+
+
+            <div class="owner-info">
+                No owner assigned.
+            </div>
+
+
+            <div class="owner-status status-empty">
+                ○ Available
+            </div>
+
+        `;
+
+    }
+
+
+    list.appendChild(box);
+
+}
+
+
+/* =====================================================
+   DELETE OWNER
+===================================================== */
+
+async function deleteOwner(
+    id,
+    name,
+    isCurrent
+){
+
+    const confirmed =
+        confirm(
+            "DELETE OWNER?\n\n" +
+            "Owner: " + name + "\n\n" +
+            "This will permanently delete:\n" +
+            "• Owner Profile\n" +
+            "• Supabase Login Account\n\n" +
+            "This action cannot be undone."
+        );
+
+
+    if(!confirmed){
+        return;
+    }
+
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+        .rpc(
+            "delete_owner_account",
+            {
+                target_user_id:id
+            }
+        );
+
+
+    if(error){
+
+        console.error(error);
+
+        showMessage(
+            "managementMessage",
+            error.message,
+            "error"
+        );
+
+        return;
+    }
+
+
+    if(data !== true){
+
+        showMessage(
+            "managementMessage",
+            "Owner deletion failed.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if(isCurrent){
+
+        await supabaseClient
+            .auth
+            .signOut();
+
+
+        window.location.href =
+            "owner-login.html";
+
+        return;
+    }
+
+
+    showMessage(
+        "managementMessage",
+        "Owner and Supabase login account deleted successfully."
+    );
+
+
+    await loadOwners();
+
+}
+
+
+/* =====================================================
+   ADD OWNER MODAL
+===================================================== */
+
+function openOwnerModal(){
+
+    document.getElementById(
+        "newOwnerName"
+    ).value = "";
+
+
+    document.getElementById(
+        "newOwnerMobile"
+    ).value = "";
+
+
+    document.getElementById(
+        "newOwnerEmail"
+    ).value = "";
+
+
+    document.getElementById(
+        "newOwnerPassword"
+    ).value = "";
+
+
+    document.getElementById(
+        "newOwnerMessage"
+    ).className =
+        "message";
+
+
+    document.getElementById(
+        "ownerModal"
+    ).classList.add("show");
+
+}
+
+
+function closeOwnerModal(){
+
+    document.getElementById(
+        "ownerModal"
+    ).classList.remove("show");
+
+}
+
+
+/* =====================================================
+   CREATE OWNER
+===================================================== */
+
+async function createOwner(){
+
+    const name =
+        document.getElementById(
+            "newOwnerName"
+        ).value.trim();
+
+
+    const mobile =
+        document.getElementById(
+            "newOwnerMobile"
+        ).value.trim();
+
+
+    const email =
+        document.getElementById(
+            "newOwnerEmail"
+        ).value.trim();
+
+
+    const password =
+        document.getElementById(
+            "newOwnerPassword"
+        ).value;
+
+
+    if(!name){
+
+        showMessage(
+            "newOwnerMessage",
+            "Enter owner name.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if(!email){
+
+        showMessage(
+            "newOwnerMessage",
+            "Enter owner email.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if(password.length < 6){
+
+        showMessage(
+            "newOwnerMessage",
+            "Password must be at least 6 characters.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const {
+        data:countData,
+        error:countError
+    } =
+    await supabaseClient
+        .rpc(
+            "get_owner_count"
+        );
+
+
+    if(countError){
+
+        showMessage(
+            "newOwnerMessage",
+            countError.message,
+            "error"
+        );
+
+        return;
+    }
+
+
+    const count =
+        Number(
+            countData || 0
+        );
+
+
+    if(count >= 2){
+
+        showMessage(
+            "newOwnerMessage",
+            "Maximum 2 owners are allowed.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const slot =
+        count === 0
+            ? 1
+            : 2;
+
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+        .auth
+        .signUp({
+
+            email:email,
+
+            password:password,
+
+            options:{
+                data:{
+
+                    owner_name:name,
+
+                    mobile:mobile,
+
+                    owner_slot:slot
+
+                }
+            }
+
+        });
+
+
+    if(error){
+
+        showMessage(
+            "newOwnerMessage",
+            error.message,
+            "error"
+        );
+
+        return;
+    }
+
+
+    if(!data || !data.user){
+
+        showMessage(
+            "newOwnerMessage",
+            "Owner account creation failed.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const {
+        error:profileError
+    } =
+    await supabaseClient
+        .from("owner_profile")
+        .insert({
+
+            id:data.user.id,
+
+            owner_name:name,
+
+            mobile:mobile,
+
+            email:email,
+
+            shop_name:
+                currentProfile?.shop_name ||
+                "BOMBAY NX",
+
+            owner_slot:slot
+
+        });
+
+
+    if(profileError){
+
+        showMessage(
+            "newOwnerMessage",
+            profileError.message,
+            "error"
+        );
+
+        return;
+    }
+
+
+    showMessage(
+        "newOwnerMessage",
+        "Owner created successfully."
+    );
+
+
+    setTimeout(
+        async () => {
+
+            closeOwnerModal();
+
+            await loadOwners();
+
+        },
+        1000
+    );
+
+}
+
+
+/* =====================================================
+   PASSWORD
+===================================================== */
+
+function openPasswordModal(){
+
+    document.getElementById(
+        "newPassword"
+    ).value = "";
+
+
+    document.getElementById(
+        "confirmPassword"
+    ).value = "";
+
+
+    document.getElementById(
+        "passwordMessage"
+    ).className =
+        "message";
+
+
+    document.getElementById(
+        "passwordModal"
+    ).classList.add("show");
+
+}
+
+
+function closePasswordModal(){
+
+    document.getElementById(
+        "passwordModal"
+    ).classList.remove("show");
+
+}
+
+
+async function changePassword(){
+
+    const password =
+        document.getElementById(
+            "newPassword"
+        ).value;
+
+
+    const confirmPassword =
+        document.getElementById(
+            "confirmPassword"
+        ).value;
+
+
+    if(password.length < 6){
+
+        showMessage(
+            "passwordMessage",
+            "Password must be at least 6 characters.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if(password !== confirmPassword){
+
+        showMessage(
+            "passwordMessage",
+            "Passwords do not match.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const {
+        error
+    } =
+    await supabaseClient
+        .auth
+        .updateUser({
+
+            password:password
+
+        });
+
+
+    if(error){
+
+        showMessage(
+            "passwordMessage",
+            error.message,
+            "error"
+        );
+
+        return;
+    }
+
+
+    showMessage(
+        "passwordMessage",
+        "Password updated successfully."
+    );
+
+
+    setTimeout(
+        closePasswordModal,
+        1200
+    );
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+async function logout(){
+
+    await supabaseClient
+        .auth
+        .signOut();
+
+
+    window.location.href =
+        "owner-login.html";
+
+}
+
+
+/* =====================================================
+   CLEAR ALL BUSINESS DATA
+===================================================== */
+
+async function clearAllData(){
+
+    const first =
+        confirm(
+            "⚠️ CLEAR ALL BOMBAY NX DATA?\n\n" +
+
+            "This will permanently delete:\n\n" +
+
+            "• Bills / Sales\n" +
+            "• Sale Items\n" +
+            "• Customer Payments\n" +
+            "• Purchases\n" +
+            "• Purchase Items\n" +
+            "• Supplier Payments\n" +
+            "• Expenses\n" +
+            "• Products / Stock\n" +
+            "• Categories\n" +
+            "• Item Master\n" +
+            "• Suppliers\n" +
+            "• Supplier Returns\n\n" +
+
+            "Owner login accounts will remain.\n\n" +
+
+            "Continue?"
+        );
+
+
+    if(!first){
+        return;
+    }
+
+
+    const second =
+        confirm(
+            "FINAL WARNING!\n\n" +
+
+            "ALL BUSINESS DATA WILL BE " +
+            "PERMANENTLY DELETED FROM SUPABASE.\n\n" +
+
+            "This cannot be undone.\n\n" +
+
+            "Are you absolutely sure?"
+        );
+
+
+    if(!second){
+        return;
+    }
+
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+        .rpc(
+            "clear_bombay_nx_data"
+        );
+
+
+    if(error){
+
+        console.error(error);
+
+        showMessage(
+            "clearDataMessage",
+            error.message,
+            "error"
+        );
+
+        return;
+    }
+
+
+    if(data !== true){
+
+        showMessage(
+            "clearDataMessage",
+            "Data could not be cleared.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    showMessage(
+        "clearDataMessage",
+        "All BOMBAY NX business data has been permanently deleted from Supabase."
+    );
+
+}
+
+
+/* =====================================================
+   INIT
+===================================================== */
+
+async function init(){
+
+    const loggedIn =
+        await checkAuth();
+
+
+    if(!loggedIn){
+        return;
+    }
+
+
+    await loadProfile();
+
+    await loadOwners();
+
+}
+
+
+init();
+
+</script>
+
+</body>
+
+</html>

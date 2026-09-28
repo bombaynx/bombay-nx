@@ -1,0 +1,3296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>BOMBAY NX | Reports</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f5f1e8;
+    color:#222;
+}
+
+/* HEADER */
+
+header{
+    height:72px;
+    background:#171717;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 28px;
+    box-shadow:0 4px 14px rgba(0,0,0,.18);
+}
+
+.logo{
+    font-size:25px;
+    font-weight:900;
+    letter-spacing:1.5px;
+}
+
+.logo span{
+    color:#c9a227;
+}
+
+.header-right{
+    display:flex;
+    gap:10px;
+}
+
+.dark-btn{
+    border:1px solid #555;
+    background:#252525;
+    color:#fff;
+    padding:10px 16px;
+    border-radius:7px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+.dark-btn:hover{
+    background:#333;
+}
+
+/* PAGE */
+
+.container{
+    max-width:1400px;
+    margin:28px auto;
+    padding:0 18px 50px;
+}
+
+h1{
+    margin:0;
+    font-size:30px;
+}
+
+.page-subtitle{
+    margin-top:6px;
+    color:#777;
+}
+
+/* FILTER */
+
+.filter-box{
+    background:#fff;
+    border:1px solid #ddd5c7;
+    border-radius:12px;
+    padding:16px;
+    margin-top:22px;
+    box-shadow:0 4px 14px rgba(0,0,0,.05);
+}
+
+.filter-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+}
+
+label{
+    display:block;
+    font-size:12px;
+    font-weight:800;
+    margin-bottom:6px;
+    color:#555;
+}
+
+input,
+select{
+    width:100%;
+    padding:11px 12px;
+    border:1px solid #d8d0c2;
+    border-radius:7px;
+    background:#fff;
+    outline:none;
+}
+
+input:focus,
+select:focus{
+    border-color:#b08a20;
+}
+
+.filter-buttons{
+    display:flex;
+    gap:10px;
+    margin-top:14px;
+}
+
+.gold-btn{
+    border:0;
+    background:#b08a20;
+    color:#fff;
+    padding:11px 18px;
+    border-radius:7px;
+    font-weight:800;
+    cursor:pointer;
+}
+
+.gold-btn:hover{
+    background:#96741a;
+}
+
+.light-btn{
+    border:1px solid #cfc5b4;
+    background:#faf8f2;
+    padding:11px 18px;
+    border-radius:7px;
+    font-weight:800;
+    cursor:pointer;
+}
+
+/* REPORT CARDS */
+
+.report-grid{
+    margin-top:22px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+}
+
+.report-card{
+    background:#fff;
+    border:1px solid #ddd5c7;
+    border-radius:12px;
+    padding:18px;
+    cursor:pointer;
+    transition:.2s;
+    box-shadow:0 4px 12px rgba(0,0,0,.04);
+}
+
+.report-card:hover{
+    transform:translateY(-2px);
+    border-color:#c9a227;
+}
+
+.report-card.active{
+    border:2px solid #b08a20;
+    background:#fffdf7;
+}
+
+.report-icon{
+    font-size:25px;
+}
+
+.report-title{
+    font-weight:900;
+    margin-top:9px;
+}
+
+.report-small{
+    color:#777;
+    font-size:12px;
+    margin-top:4px;
+}
+
+/* REPORT AREA */
+
+.report-panel{
+    margin-top:22px;
+    background:#fff;
+    border:1px solid #ddd5c7;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 4px 14px rgba(0,0,0,.05);
+}
+
+.report-head{
+    background:#252525;
+    color:#fff;
+    padding:16px 18px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+}
+
+.report-head h2{
+    margin:0;
+    font-size:19px;
+}
+
+.report-actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.report-body{
+    padding:18px;
+}
+
+/* SUMMARY */
+
+.summary-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-bottom:18px;
+}
+
+.summary-card{
+    background:#faf8f2;
+    border:1px solid #e2dacb;
+    border-radius:9px;
+    padding:13px;
+}
+
+.summary-label{
+    color:#888;
+    font-size:11px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+}
+
+.summary-value{
+    margin-top:5px;
+    font-size:18px;
+    font-weight:900;
+}
+
+/* TABLE */
+
+.table-wrap{
+    width:100%;
+    overflow-x:auto;
+    border:1px solid #ddd5c7;
+    border-radius:9px;
+}
+
+.report-table{
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
+}
+
+.report-table th{
+    background:#252525;
+    color:#fff;
+    padding:11px 10px;
+    text-align:left;
+    font-size:12px;
+    white-space:nowrap;
+}
+
+.report-table td{
+    padding:10px;
+    border-bottom:1px solid #eee8dd;
+    font-size:12px;
+    vertical-align:middle;
+}
+
+.report-table tbody tr:nth-child(even){
+    background:#fcfaf6;
+}
+
+.report-table th.amount,
+.report-table td.amount{
+    text-align:right;
+    white-space:nowrap;
+    min-width:120px;
+}
+
+.money{
+    white-space:nowrap;
+    text-align:right;
+}
+
+.empty{
+    text-align:center!important;
+    padding:28px!important;
+    color:#888;
+}
+
+/* P&L */
+
+.pl-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.pl-table th{
+    background:#252525;
+    color:#fff;
+    padding:11px;
+}
+
+.pl-table td{
+    padding:9px 11px;
+    border-bottom:1px solid #eee8dd;
+}
+
+.pl-table .dr{
+    width:50%;
+    border-right:2px solid #222;
+}
+
+.pl-table .cr{
+    width:50%;
+}
+
+.pl-table .amount{
+    text-align:right;
+    white-space:nowrap;
+}
+
+.pl-total{
+    font-weight:900;
+    background:#f5f1e8;
+}
+
+.pl-profit{
+    font-weight:900;
+    background:#eee7d8;
+}
+
+/* MOBILE */
+
+@media(max-width:1000px){
+
+    .report-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .summary-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:700px){
+
+    header{
+        padding:0 12px;
+    }
+
+    .logo{
+        font-size:20px;
+    }
+
+    .filter-grid{
+        grid-template-columns:1fr;
+    }
+
+    .report-grid{
+        grid-template-columns:1fr;
+    }
+
+    .summary-grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .report-head{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+}
+
+/* PRINT */
+
+@media print{
+
+    body{
+        background:#fff;
+    }
+
+    header,
+    .filter-box,
+    .report-grid,
+    .report-actions{
+        display:none!important;
+    }
+
+    .container{
+        max-width:none;
+        margin:0;
+        padding:0;
+    }
+
+    .report-panel{
+        border:0;
+        box-shadow:none;
+        margin:0;
+    }
+
+    .report-head{
+        background:#fff;
+        color:#000;
+        border-bottom:2px solid #000;
+    }
+
+    .report-body{
+        padding:10px 0;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        BOMBAY <span>NX</span>
+    </div>
+
+    <div class="header-right">
+
+        <button class="dark-btn"
+                onclick="goDashboard()">
+            Dashboard
+        </button>
+
+        <button class="dark-btn"
+                onclick="logout()">
+            Logout
+        </button>
+
+    </div>
+
+</header>
+
+
+<div class="container">
+
+    <h1>Reports</h1>
+
+    <div class="page-subtitle">
+        Business reports & accounting statements
+    </div>
+
+
+    <!-- FILTER -->
+
+    <div class="filter-box">
+
+        <div class="filter-grid">
+
+            <div>
+                <label>From Date</label>
+                <input type="date"
+                       id="fromDate">
+            </div>
+
+            <div>
+                <label>To Date</label>
+                <input type="date"
+                       id="toDate">
+            </div>
+
+            <div>
+                <label>Search</label>
+                <input type="text"
+                       id="searchText"
+                       placeholder="Bill / Customer / Supplier">
+            </div>
+
+        </div>
+
+        <div class="filter-buttons">
+
+            <button class="gold-btn"
+                    onclick="applyFilters()">
+                Apply
+            </button>
+
+            <button class="light-btn"
+                    onclick="clearFilters()">
+                Clear
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- REPORT CARDS -->
+
+    <div class="report-grid">
+
+        <div class="report-card active"
+             onclick="showReport('sales',this)">
+            <div class="report-icon">🧾</div>
+            <div class="report-title">
+                Sales Report
+            </div>
+            <div class="report-small">
+                Bill-wise sales
+            </div>
+        </div>
+
+
+        <div class="report-card"
+             onclick="showReport('expense',this)">
+            <div class="report-icon">💸</div>
+            <div class="report-title">
+                Expense Report
+            </div>
+            <div class="report-small">
+                Expense-wise register
+            </div>
+        </div>
+
+
+        <div class="report-card"
+             onclick="showReport('purchase',this)">
+            <div class="report-icon">🏭</div>
+            <div class="report-title">
+                Purchase Report
+            </div>
+            <div class="report-small">
+                Item-wise purchases
+            </div>
+        </div>
+
+
+        <div class="report-card"
+             onclick="showReport('customer',this)">
+            <div class="report-icon">👥</div>
+            <div class="report-title">
+                Customer Outstanding
+            </div>
+            <div class="report-small">
+                Customer pending
+            </div>
+        </div>
+
+
+        <div class="report-card"
+             onclick="showReport('supplier',this)">
+            <div class="report-icon">🏪</div>
+            <div class="report-title">
+                Supplier Outstanding
+            </div>
+            <div class="report-small">
+                Supplier pending
+            </div>
+        </div>
+
+
+        <!-- NEW -->
+
+        <div class="report-card"
+             onclick="showReport('income',this)">
+            <div class="report-icon">💰</div>
+            <div class="report-title">
+                Income Statement
+            </div>
+            <div class="report-small">
+                Sale = Income
+            </div>
+        </div>
+
+
+        <div class="report-card"
+             onclick="showReport('pl',this)">
+            <div class="report-icon">📈</div>
+            <div class="report-title">
+                P&L A/c
+            </div>
+            <div class="report-small">
+                Profit & Loss
+            </div>
+        </div>
+
+
+        <!-- PAYMENT = ONLY SUPPLIER -->
+
+        <div class="report-card"
+             onclick="showReport('payment',this)">
+            <div class="report-icon">💳</div>
+            <div class="report-title">
+                Payment Report
+            </div>
+            <div class="report-small">
+                Supplier payments only
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- REPORT PANEL -->
+
+    <div class="report-panel">
+
+        <div class="report-head">
+
+            <h2 id="reportTitle">
+                Sales Report
+            </h2>
+
+            <div class="report-actions">
+
+                <button class="dark-btn"
+                        onclick="printReport()">
+                    🖨 Print
+                </button>
+
+                <button class="gold-btn"
+                        onclick="downloadPDF()">
+                    PDF
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="report-body"
+             id="reportBody">
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+    "https://tetihwttelthoyeidwhl.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_RoeCtLr9AhiOqKJq_zMXOA_txz_hOy7";
+
+const db =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =========================================================
+   DATA CACHE
+========================================================= */
+
+const cache = {
+
+    sales:[],
+    saleItems:[],
+
+    expenses:[],
+
+    purchases:[],
+    purchaseItems:[],
+
+    salePayments:[],
+    purchasePayments:[]
+
+};
+
+let currentReport = "sales";
+
+
+/* =========================================================
+   BASIC HELPERS
+========================================================= */
+
+function esc(value){
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        value == null ? "" : String(value);
+
+    return div.innerHTML;
+}
+
+
+function money(value){
+
+    return "₹" +
+        Number(value || 0).toLocaleString(
+            "en-IN",
+            {
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
+            }
+        );
+
+}
+
+
+function pdfMoney(value){
+
+    return "Rs. " +
+        Number(value || 0).toLocaleString(
+            "en-IN",
+            {
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
+            }
+        );
+
+}
+
+
+function dateOnly(value){
+
+    if(!value) return "";
+
+    return String(value).slice(0,10);
+
+}
+
+
+function today(){
+
+    const d = new Date();
+
+    const y =
+        d.getFullYear();
+
+    const m =
+        String(d.getMonth()+1)
+        .padStart(2,"0");
+
+    const day =
+        String(d.getDate())
+        .padStart(2,"0");
+
+    return `${y}-${m}-${day}`;
+
+}
+
+
+function emptyRow(colspan,text){
+
+    return `
+        <tr>
+            <td colspan="${colspan}"
+                class="empty">
+                ${esc(text)}
+            </td>
+        </tr>
+    `;
+
+}
+
+
+function dateInRange(value,from,to){
+
+    const d =
+        dateOnly(value);
+
+    if(from && d < from)
+        return false;
+
+    if(to && d > to)
+        return false;
+
+    return true;
+
+}
+
+
+/* =========================================================
+   AUTH
+========================================================= */
+
+async function checkAuth(){
+
+    const result =
+        await db.auth.getSession();
+
+    if(!result.data.session){
+
+        window.location.href =
+            "owner-login.html";
+
+        return false;
+
+    }
+
+    return true;
+
+}
+
+
+/* =========================================================
+   LOAD ALL DATA
+========================================================= */
+
+async function loadAllData(){
+
+    const [
+        salesResult,
+        saleItemsResult,
+        expenseResult,
+        purchaseResult,
+        purchaseItemsResult,
+        salePaymentsResult,
+        purchasePaymentsResult
+    ] = await Promise.all([
+
+        db.from("sales")
+          .select("*")
+          .order("bill_date",{ascending:true}),
+
+        db.from("sale_items")
+          .select("*"),
+
+        db.from("expenses")
+          .select("*")
+          .order("expense_date",{ascending:true}),
+
+        db.from("purchases")
+          .select("*")
+          .order("purchase_date",{ascending:true}),
+
+        db.from("purchase_items")
+          .select("*"),
+
+        db.from("sale_payments")
+          .select("*")
+          .order("payment_date",{ascending:true}),
+
+        db.from("purchase_payments")
+          .select("*")
+          .order("payment_date",{ascending:true})
+
+    ]);
+
+
+    if(salesResult.error)
+        console.error(salesResult.error);
+
+    if(saleItemsResult.error)
+        console.error(saleItemsResult.error);
+
+    if(expenseResult.error)
+        console.error(expenseResult.error);
+
+    if(purchaseResult.error)
+        console.error(purchaseResult.error);
+
+    if(purchaseItemsResult.error)
+        console.error(purchaseItemsResult.error);
+
+    if(salePaymentsResult.error)
+        console.error(salePaymentsResult.error);
+
+    if(purchasePaymentsResult.error)
+        console.error(purchasePaymentsResult.error);
+
+
+    cache.sales =
+        salesResult.data || [];
+
+    cache.saleItems =
+        saleItemsResult.data || [];
+
+    cache.expenses =
+        expenseResult.data || [];
+
+    cache.purchases =
+        purchaseResult.data || [];
+
+    cache.purchaseItems =
+        purchaseItemsResult.data || [];
+
+    cache.salePayments =
+        salePaymentsResult.data || [];
+
+    cache.purchasePayments =
+        purchasePaymentsResult.data || [];
+
+}
+
+
+/* =========================================================
+   FILTERS
+========================================================= */
+
+function getFilters(){
+
+    return {
+
+        from:
+            document.getElementById(
+                "fromDate"
+            ).value,
+
+        to:
+            document.getElementById(
+                "toDate"
+            ).value,
+
+        search:
+            (
+                document.getElementById(
+                    "searchText"
+                ).value || ""
+            )
+            .trim()
+            .toLowerCase()
+
+    };
+
+}
+
+
+function applyFilters(){
+
+    renderCurrentReport();
+
+}
+
+
+function clearFilters(){
+
+    document.getElementById(
+        "fromDate"
+    ).value = "";
+
+    document.getElementById(
+        "toDate"
+    ).value = "";
+
+    document.getElementById(
+        "searchText"
+    ).value = "";
+
+    renderCurrentReport();
+
+}
+
+
+/* =========================================================
+   REPORT SWITCH
+========================================================= */
+
+function showReport(type,card){
+
+    currentReport =
+        type;
+
+    document
+        .querySelectorAll(".report-card")
+        .forEach(x =>
+            x.classList.remove("active")
+        );
+
+    if(card)
+        card.classList.add("active");
+
+    renderCurrentReport();
+
+}
+
+
+function renderCurrentReport(){
+
+    const titles = {
+
+        sales:"Sales Report",
+
+        expense:"Expense Report",
+
+        purchase:"Purchase Report",
+
+        customer:"Customer Outstanding",
+
+        supplier:"Supplier Outstanding",
+
+        income:"Income Statement",
+
+        pl:"Profit & Loss A/c",
+
+        payment:"Payment Report"
+
+    };
+
+    document.getElementById(
+        "reportTitle"
+    ).textContent =
+        titles[currentReport];
+
+
+    if(currentReport === "sales")
+        renderSalesReport();
+
+    if(currentReport === "expense")
+        renderExpenseReport();
+
+    if(currentReport === "purchase")
+        renderPurchaseReport();
+
+    if(currentReport === "customer")
+        renderCustomerOutstanding();
+
+    if(currentReport === "supplier")
+        renderSupplierOutstanding();
+
+    if(currentReport === "income")
+        renderIncomeStatement();
+
+    if(currentReport === "pl")
+        renderPL();
+
+    if(currentReport === "payment")
+        renderPaymentReport();
+
+}
+
+
+/* =========================================================
+   SALES REPORT
+========================================================= */
+
+function renderSalesReport(){
+
+    const {
+        from,
+        to,
+        search
+    } = getFilters();
+
+
+    const rows =
+        cache.sales.filter(s => {
+
+            if(!dateInRange(
+                s.bill_date,
+                from,
+                to
+            ))
+                return false;
+
+            if(search){
+
+                const text =
+                    (
+                        String(s.bill_no||"") +
+                        " " +
+                        String(s.customer_name||"") +
+                        " " +
+                        String(s.customer_mobile||"")
+                    ).toLowerCase();
+
+                if(!text.includes(search))
+                    return false;
+
+            }
+
+            return true;
+
+        });
+
+
+    let total = 0;
+    let paid = 0;
+    let pending = 0;
+
+
+    rows.forEach(s => {
+
+        total +=
+            Number(s.final_amount || 0);
+
+        paid +=
+            Number(s.paid_amount || 0);
+
+        pending +=
+            Number(s.pending_amount || 0);
+
+    });
+
+
+    document.getElementById(
+        "reportBody"
+    ).innerHTML = `
+
+        <div class="summary-grid">
+
+            <div class="summary-card">
+                <div class="summary-label">
+                    Total Sales
+                </div>
+                <div class="summary-value">
+                    ${money(total)}
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-label">
+                    Total Paid
+                </div>
+                <div class="summary-value">
+                    ${money(paid)}
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-label">
+                    Pending
+                </div>
+                <div class="summary-value">
+                    ${money(pending)}
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-label">
+                    Bills
+                </div>
+                <div class="summary-value">
+                    ${rows.length}
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table class="report-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Date</th>
+
+                        <th>Bill No.</th>
+
+                        <th>Customer</th>
+
+                        <th class="amount">
+                            Total
+                        </th>
+
+                        <th class="amount">
+                            Paid
+                        </th>
+
+                        <th class="amount">
+                            Balance
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    ${
+                        rows.map(s => `
+
+                            <tr>
+
+                                <td>
+                                    ${esc(
+                                        dateOnly(
+                                            s.bill_date
+                                        )
+                                    )}
+                                </td>
+
+                                <td>
+                                    <b>
+                                        ${esc(
+                                            s.bill_no
+                                        )}
+                                    </b>
+                                </td>
+
+                                <td>
+                                    ${esc(
+                                        s.customer_name ||
+                                        "-"
+                                    )}
+                                </td>
+
+                                <td class="amount">
+                                    ${money(
+                                        s.final_amount
+                                    )}
+                                </td>
+
+                                <td class="amount">
+                                    ${money(
+                                        s.paid_amount
+                                    )}
+                                </td>
+
+                                <td class="amount">
+                                    ${money(
+                                        s.pending_amount
+                                    )}
+                                </td>
+
+                            </tr>
+
+                        `).join("")
+                    }
+
+                    ${
+                        rows.length
+                        ? ""
+                        : emptyRow(
+                            6,
+                            "No sales found."
+                        )
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+    `;
+
+}
+
+
+/* =========================================================
+   EXPENSE REPORT
+========================================================= */
+
+function renderExpenseReport(){
+
+    const {
+        from,
+        to,
+        search
+    } = getFilters();
+
+
+    const rows =
+        cache.expenses.filter(e => {
+
+            if(!dateInRange(
+                e.expense_date,
+                from,
+                to
+            ))
+                return false;
+
+            if(search){
+
+                const text =
+                    (
+                        String(e.category||"") +
+                        " " +
+                        String(e.description||"") +
+                        " " +
+                        String(e.payment_mode||"")
+                    ).toLowerCase();
+
+                if(!text.includes(search))
+                    return false;
+
+            }
+
+            return true;
+
+        });
+
+
+    let total = 0;
+
+
+    rows.forEach(e => {
+
+        total +=
+            Number(e.amount || 0);
+
+    });
+
+
+    document.getElementById(
+        "reportBody"
+    ).innerHTML = `
+
+        <div class="summary-grid">
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    Total Expense
+                </div>
+
+                <div class="summary-value">
+                    ${money(total)}
+                </div>
+
+            </div>
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    Entries
+                </div>
+
+                <div class="summary-value">
+                    ${rows.length}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table class="report-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Date</th>
+
+                        <th>Category</th>
+
+                        <th>Description</th>
+
+                        <th>Payment Mode</th>
+
+                        <th class="amount">
+                            Amount
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    ${
+                        rows.map(e => `
+
+                            <tr>
+
+                                <td>
+                                    ${esc(
+                                        dateOnly(
+                                            e.expense_date
+                                        )
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${esc(
+                                        e.category
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${esc(
+                                        e.description ||
+                                        "-"
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${esc(
+                                        e.payment_mode ||
+                                        "-"
+                                    )}
+                                </td>
+
+                                <td class="amount">
+                                    ${money(
+                                        e.amount
+                                    )}
+                                </td>
+
+                            </tr>
+
+                        `).join("")
+                    }
+
+                    ${
+                        rows.length
+                        ? ""
+                        : emptyRow(
+                            5,
+                            "No expenses found."
+                        )
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+    `;
+
+}
+
+
+/* =========================================================
+   PURCHASE REPORT
+   ITEM NAME INCLUDED
+========================================================= */
+
+function renderPurchaseReport(){
+
+    const {
+        from,
+        to,
+        search
+    } = getFilters();
+
+
+    const purchases =
+        cache.purchases.filter(p => {
+
+            if(!dateInRange(
+                p.purchase_date,
+                from,
+                to
+            ))
+                return false;
+
+            if(search){
+
+                const text =
+                    (
+                        String(p.purchase_no||"") +
+                        " " +
+                        String(p.shop_name||"") +
+                        " " +
+                        String(p.supplier_name||"")
+                    ).toLowerCase();
+
+                if(!text.includes(search))
+                    return false;
+
+            }
+
+            return true;
+
+        });
+
+
+    let totalPurchase = 0;
+    let totalPaid = 0;
+    let totalPending = 0;
+
+    let html = "";
+
+
+    purchases.forEach(p => {
+
+        const items =
+            cache.purchaseItems.filter(
+                i =>
+                    Number(i.purchase_id) ===
+                    Number(p.id)
+            );
+
+
+        totalPurchase +=
+            Number(p.total_amount || 0);
+
+        totalPaid +=
+            Number(p.paid_amount || 0);
+
+        totalPending +=
+            Number(p.pending_amount || 0);
+
+
+        if(items.length){
+
+            items.forEach((item,index) => {
+
+                html += `
+
+                    <tr>
+
+                        <td>
+                            ${esc(
+                                dateOnly(
+                                    p.purchase_date
+                                )
+                            )}
+                        </td>
+
+                        <td>
+                            <b>
+                                ${esc(
+                                    p.purchase_no
+                                )}
+                            </b>
+                        </td>
+
+                        <td>
+                            ${esc(
+                                p.shop_name ||
+                                p.supplier_name ||
+                                "-"
+                            )}
+                        </td>
+
+                        <td>
+                            ${esc(
+                                item.item_name ||
+                                "-"
+                            )}
+                        </td>
+
+                        <td class="amount">
+
+                            ${
+                                index === 0
+                                ? money(
+                                    p.total_amount
+                                )
+                                : "-"
+                            }
+
+                        </td>
+
+                        <td class="amount">
+
+                            ${
+                                index === 0
+                                ? money(
+                                    p.paid_amount
+                                )
+                                : "-"
+                            }
+
+                        </td>
+
+                        <td class="amount">
+
+                            ${
+                                index === 0
+                                ? money(
+                                    p.pending_amount
+                                )
+                                : "-"
+                            }
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            });
+
+        }else{
+
+            html += `
+
+                <tr>
+
+                    <td>
+                        ${esc(
+                            dateOnly(
+                                p.purchase_date
+                            )
+                        )}
+                    </td>
+
+                    <td>
+                        <b>
+                            ${esc(
+                                p.purchase_no
+                            )}
+                        </b>
+                    </td>
+
+                    <td>
+                        ${esc(
+                            p.shop_name ||
+                            p.supplier_name ||
+                            "-"
+                        )}
+                    </td>
+
+                    <td>
+                        -
+                    </td>
+
+                    <td class="amount">
+                        ${money(
+                            p.total_amount
+                        )}
+                    </td>
+
+                    <td class="amount">
+                        ${money(
+                            p.paid_amount
+                        )}
+                    </td>
+
+                    <td class="amount">
+                        ${money(
+                            p.pending_amount
+                        )}
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+
+    });
+
+
+    document.getElementById(
+        "reportBody"
+    ).innerHTML = `
+
+        <div class="summary-grid">
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    Total Purchase
+                </div>
+
+                <div class="summary-value">
+                    ${money(totalPurchase)}
+                </div>
+
+            </div>
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    Total Paid
+                </div>
+
+                <div class="summary-value">
+                    ${money(totalPaid)}
+                </div>
+
+            </div>
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    Pending
+                </div>
+
+                <div class="summary-value">
+                    ${money(totalPending)}
+                </div>
+
+            </div>
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    Bills
+                </div>
+
+                <div class="summary-value">
+                    ${purchases.length}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table class="report-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Date</th>
+
+                        <th>Bill No.</th>
+
+                        <th>Supplier / Shop</th>
+
+                        <th>Item Name</th>
+
+                        <th class="amount">
+                            Purchase
+                        </th>
+
+                        <th class="amount">
+                            Paid
+                        </th>
+
+                        <th class="amount">
+                            Balance
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    ${
+                        html ||
+                        emptyRow(
+                            7,
+                            "No purchases found."
+                        )
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   CUSTOMER OUTSTANDING
+========================================================= */
+
+function renderCustomerOutstanding(){
+
+    const {
+        from,
+        to,
+        search
+    } = getFilters();
+
+
+    const map = {};
+
+
+    cache.sales.forEach(s => {
+
+        if(!dateInRange(
+            s.bill_date,
+            from,
+            to
+        ))
+            return;
+
+
+        const name =
+            s.customer_name ||
+            "Walk-in Customer";
+
+
+        const mobile =
+            s.customer_mobile ||
+            "";
+
+
+        const key =
+            name + "|" + mobile;
+
+
+        if(!map[key]){
+
+            map[key] = {
+
+                name,
+                mobile,
+                sales:0,
+                paid:0,
+                balance:0
+
+            };
+
+        }
+
+
+        map[key].sales +=
+            Number(
+                s.final_amount || 0
+            );
+
+        map[key].paid +=
+            Number(
+                s.paid_amount || 0
+            );
+
+        map[key].balance +=
+            Number(
+                s.pending_amount || 0
+            );
+
+    });
+
+
+    let rows =
+        Object.values(map);
+
+
+    if(search){
+
+        rows =
+            rows.filter(r =>
+                (
+                    r.name +
+                    " " +
+                    r.mobile
+                )
+                .toLowerCase()
+                .includes(search)
+            );
+
+    }
+
+
+    let totalSales = 0;
+    let totalPaid = 0;
+    let totalBalance = 0;
+
+
+    rows.forEach(r => {
+
+        totalSales += r.sales;
+        totalPaid += r.paid;
+        totalBalance += r.balance;
+
+    });
+
+
+    document.getElementById(
+        "reportBody"
+    ).innerHTML = `
+
+        <div class="summary-grid">
+
+            <div class="summary-card">
+                <div class="summary-label">
+                    Total Sales
+                </div>
+                <div class="summary-value">
+                    ${money(totalSales)}
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-label">
+                    Total Paid
+                </div>
+                <div class="summary-value">
+                    ${money(totalPaid)}
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-label">
+                    Outstanding
+                </div>
+                <div class="summary-value">
+                    ${money(totalBalance)}
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-label">
+                    Customers
+                </div>
+                <div class="summary-value">
+                    ${rows.length}
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table class="report-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Customer</th>
+
+                        <th>Mobile</th>
+
+                        <th class="amount">
+                            Sales
+                        </th>
+
+                        <th class="amount">
+                            Paid
+                        </th>
+
+                        <th class="amount">
+                            Balance
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    ${
+                        rows.map(r => `
+
+                            <tr>
+
+                                <td>
+                                    <b>
+                                        ${esc(r.name)}
+                                    </b>
+                                </td>
+
+                                <td>
+                                    ${esc(
+                                        r.mobile ||
+                                        "-"
+                                    )}
+                                </td>
+
+                                <td class="amount">
+                                    ${money(r.sales)}
+                                </td>
+
+                                <td class="amount">
+                                    ${money(r.paid)}
+                                </td>
+
+                                <td class="amount">
+                                    ${money(r.balance)}
+                                </td>
+
+                            </tr>
+
+                        `).join("")
+                    }
+
+                    ${
+                        rows.length
+                        ? ""
+                        : emptyRow(
+                            5,
+                            "No customer outstanding."
+                        )
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   SUPPLIER OUTSTANDING
+========================================================= */
+
+function renderSupplierOutstanding(){
+
+    const {
+        from,
+        to,
+        search
+    } = getFilters();
+
+
+    const map = {};
+
+
+    cache.purchases.forEach(p => {
+
+        if(!dateInRange(
+            p.purchase_date,
+            from,
+            to
+        ))
+            return;
+
+
+        const name =
+            p.shop_name ||
+            p.supplier_name ||
+            "Supplier";
+
+
+        if(search &&
+           !name.toLowerCase().includes(search))
+            return;
+
+
+        if(!map[name]){
+
+            map[name] = {
+
+                name,
+                purchase:0,
+                paid:0,
+                balance:0
+
+            };
+
+        }
+
+
+        map[name].purchase +=
+            Number(
+                p.total_amount || 0
+            );
+
+        map[name].paid +=
+            Number(
+                p.paid_amount || 0
+            );
+
+        map[name].balance +=
+            Number(
+                p.pending_amount || 0
+            );
+
+    });
+
+
+    const rows =
+        Object.values(map);
+
+
+    let purchase = 0;
+    let paid = 0;
+    let balance = 0;
+
+
+    rows.forEach(r => {
+
+        purchase += r.purchase;
+        paid += r.paid;
+        balance += r.balance;
+
+    });
+
+
+    document.getElementById(
+        "reportBody"
+    ).innerHTML = `
+
+        <div class="summary-grid">
+
+            <div class="summary-card">
+                <div class="summary-label">
+                    Total Purchase
+                </div>
+                <div class="summary-value">
+                    ${money(purchase)}
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-label">
+                    Total Paid
+                </div>
+                <div class="summary-value">
+                    ${money(paid)}
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-label">
+                    Outstanding
+                </div>
+                <div class="summary-value">
+                    ${money(balance)}
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-label">
+                    Suppliers
+                </div>
+                <div class="summary-value">
+                    ${rows.length}
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table class="report-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Supplier / Shop
+                        </th>
+
+                        <th class="amount">
+                            Purchase
+                        </th>
+
+                        <th class="amount">
+                            Paid
+                        </th>
+
+                        <th class="amount">
+                            Balance
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    ${
+                        rows.map(r => `
+
+                            <tr>
+
+                                <td>
+                                    <b>
+                                        ${esc(r.name)}
+                                    </b>
+                                </td>
+
+                                <td class="amount">
+                                    ${money(r.purchase)}
+                                </td>
+
+                                <td class="amount">
+                                    ${money(r.paid)}
+                                </td>
+
+                                <td class="amount">
+                                    ${money(r.balance)}
+                                </td>
+
+                            </tr>
+
+                        `).join("")
+                    }
+
+                    ${
+                        rows.length
+                        ? ""
+                        : emptyRow(
+                            4,
+                            "No supplier outstanding."
+                        )
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   NEW INCOME STATEMENT
+   SALE = INCOME
+   CUSTOMER PAYMENT NOT USED
+========================================================= */
+
+function renderIncomeStatement(){
+
+    const {
+        from,
+        to,
+        search
+    } = getFilters();
+
+
+    const rows =
+        cache.sales.filter(s => {
+
+            if(!dateInRange(
+                s.bill_date,
+                from,
+                to
+            ))
+                return false;
+
+
+            if(search){
+
+                const text =
+                    (
+                        String(
+                            s.bill_no || ""
+                        ) +
+                        " " +
+                        String(
+                            s.customer_name || ""
+                        ) +
+                        " " +
+                        String(
+                            s.customer_mobile || ""
+                        )
+                    ).toLowerCase();
+
+
+                if(!text.includes(search))
+                    return false;
+
+            }
+
+
+            return true;
+
+        });
+
+
+    let totalIncome = 0;
+
+
+    rows.forEach(s => {
+
+        totalIncome +=
+            Number(
+                s.final_amount || 0
+            );
+
+    });
+
+
+    document.getElementById(
+        "reportBody"
+    ).innerHTML = `
+
+        <div class="summary-grid">
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    Total Sales Income
+                </div>
+
+                <div class="summary-value">
+                    ${money(totalIncome)}
+                </div>
+
+            </div>
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    Sales Bills
+                </div>
+
+                <div class="summary-value">
+                    ${rows.length}
+                </div>
+
+            </div>
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    Customer Paid
+                </div>
+
+                <div class="summary-value">
+                    Not Used
+                </div>
+
+            </div>
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    Accounting Rule
+                </div>
+
+                <div class="summary-value">
+                    Sale = Income
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table class="report-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Date</th>
+
+                        <th>Bill No.</th>
+
+                        <th>Customer</th>
+
+                        <th class="amount">
+                            Sale Income
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    ${
+                        rows.map(s => `
+
+                            <tr>
+
+                                <td>
+                                    ${esc(
+                                        dateOnly(
+                                            s.bill_date
+                                        )
+                                    )}
+                                </td>
+
+                                <td>
+                                    <b>
+                                        ${esc(
+                                            s.bill_no
+                                        )}
+                                    </b>
+                                </td>
+
+                                <td>
+                                    ${esc(
+                                        s.customer_name ||
+                                        "Walk-in Customer"
+                                    )}
+                                </td>
+
+                                <td class="amount">
+                                    ${money(
+                                        s.final_amount
+                                    )}
+                                </td>
+
+                            </tr>
+
+                        `).join("")
+                    }
+
+                    ${
+                        rows.length
+                        ? ""
+                        : emptyRow(
+                            4,
+                            "No income found."
+                        )
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   P&L
+========================================================= */
+
+function renderPL(){
+
+    const {
+        from,
+        to
+    } = getFilters();
+
+
+    let sales = 0;
+    let purchases = 0;
+    let expenses = 0;
+
+
+    cache.sales.forEach(s => {
+
+        if(dateInRange(
+            s.bill_date,
+            from,
+            to
+        )){
+
+            sales +=
+                Number(
+                    s.final_amount || 0
+                );
+
+        }
+
+    });
+
+
+    cache.purchases.forEach(p => {
+
+        if(dateInRange(
+            p.purchase_date,
+            from,
+            to
+        )){
+
+            purchases +=
+                Number(
+                    p.total_amount || 0
+                );
+
+        }
+
+    });
+
+
+    cache.expenses.forEach(e => {
+
+        if(dateInRange(
+            e.expense_date,
+            from,
+            to
+        )){
+
+            expenses +=
+                Number(
+                    e.amount || 0
+                );
+
+        }
+
+    });
+
+
+    const grossProfit =
+        sales - purchases;
+
+
+    const netProfit =
+        grossProfit - expenses;
+
+
+    document.getElementById(
+        "reportBody"
+    ).innerHTML = `
+
+        <div class="summary-grid">
+
+            <div class="summary-card">
+                <div class="summary-label">
+                    Sales
+                </div>
+                <div class="summary-value">
+                    ${money(sales)}
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-label">
+                    Purchases
+                </div>
+                <div class="summary-value">
+                    ${money(purchases)}
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-label">
+                    Expenses
+                </div>
+                <div class="summary-value">
+                    ${money(expenses)}
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-label">
+                    Net Profit
+                </div>
+                <div class="summary-value">
+                    ${money(netProfit)}
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table class="pl-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th class="dr">
+                            Dr.
+                        </th>
+
+                        <th class="cr">
+                            Cr.
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+
+                        <td class="dr">
+                            Purchases
+                            <span style="float:right">
+                                ${money(purchases)}
+                            </span>
+                        </td>
+
+                        <td class="cr">
+                            Sales
+                            <span style="float:right">
+                                ${money(sales)}
+                            </span>
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td class="dr">
+                            Indirect Expenses
+                            <span style="float:right">
+                                ${money(expenses)}
+                            </span>
+                        </td>
+
+                        <td class="cr">
+
+                            ${
+                                grossProfit >= 0
+                                ? "Gross Profit"
+                                : "Gross Loss"
+                            }
+
+                            <span style="float:right">
+                                ${money(
+                                    Math.abs(
+                                        grossProfit
+                                    )
+                                )}
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+
+                    <tr class="pl-profit">
+
+                        <td class="dr">
+
+                            ${
+                                netProfit < 0
+                                ? "Net Loss"
+                                : ""
+                            }
+
+                            ${
+                                netProfit < 0
+                                ? `<span style="float:right">
+                                    ${money(
+                                        Math.abs(
+                                            netProfit
+                                        )
+                                    )}
+                                   </span>`
+                                : ""
+                            }
+
+                        </td>
+
+
+                        <td class="cr">
+
+                            ${
+                                netProfit >= 0
+                                ? "Net Profit"
+                                : ""
+                            }
+
+                            ${
+                                netProfit >= 0
+                                ? `<span style="float:right">
+                                    ${money(
+                                        netProfit
+                                    )}
+                                   </span>`
+                                : ""
+                            }
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   PAYMENT REPORT
+   ONLY SUPPLIER PAYMENTS
+   NO CUSTOMER PAYMENTS
+========================================================= */
+
+function renderPaymentReport(){
+
+    const {
+        from,
+        to,
+        search
+    } = getFilters();
+
+
+    const rows = [];
+
+
+    cache.purchasePayments.forEach(payment => {
+
+        if(!dateInRange(
+            payment.payment_date,
+            from,
+            to
+        ))
+            return;
+
+
+        const purchase =
+            cache.purchases.find(
+                p =>
+                    Number(p.id) ===
+                    Number(
+                        payment.purchase_id
+                    )
+            );
+
+
+        if(!purchase)
+            return;
+
+
+        const supplier =
+            purchase.shop_name ||
+            purchase.supplier_name ||
+            "-";
+
+
+        if(search){
+
+            const text =
+                (
+                    String(
+                        purchase.purchase_no ||
+                        ""
+                    ) +
+                    " " +
+                    String(
+                        supplier
+                    ) +
+                    " " +
+                    String(
+                        payment.payment_mode ||
+                        ""
+                    )
+                ).toLowerCase();
+
+
+            if(!text.includes(search))
+                return;
+
+        }
+
+
+        rows.push({
+
+            date:
+                payment.payment_date,
+
+            bill:
+                purchase.purchase_no,
+
+            supplier,
+
+            mode:
+                payment.payment_mode ||
+                "-",
+
+            amount:
+                Number(
+                    payment.payment_amount ||
+                    0
+                )
+
+        });
+
+    });
+
+
+    let total = 0;
+
+
+    rows.forEach(r => {
+
+        total += r.amount;
+
+    });
+
+
+    document.getElementById(
+        "reportBody"
+    ).innerHTML = `
+
+        <div class="summary-grid">
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    Total Supplier Payments
+                </div>
+
+                <div class="summary-value">
+                    ${money(total)}
+                </div>
+
+            </div>
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    Transactions
+                </div>
+
+                <div class="summary-value">
+                    ${rows.length}
+                </div>
+
+            </div>
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    Customer Payments
+                </div>
+
+                <div class="summary-value">
+                    ₹0
+                </div>
+
+            </div>
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    Report Type
+                </div>
+
+                <div class="summary-value">
+                    Supplier Only
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table class="report-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Date</th>
+
+                        <th>Bill No.</th>
+
+                        <th>Supplier / Shop</th>
+
+                        <th>Payment Mode</th>
+
+                        <th class="amount">
+                            Amount
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    ${
+                        rows.map(r => `
+
+                            <tr>
+
+                                <td>
+                                    ${esc(
+                                        dateOnly(
+                                            r.date
+                                        )
+                                    )}
+                                </td>
+
+                                <td>
+                                    <b>
+                                        ${esc(
+                                            r.bill
+                                        )}
+                                    </b>
+                                </td>
+
+                                <td>
+                                    ${esc(
+                                        r.supplier
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${esc(
+                                        r.mode
+                                    )}
+                                </td>
+
+                                <td class="amount">
+                                    ${money(
+                                        r.amount
+                                    )}
+                                </td>
+
+                            </tr>
+
+                        `).join("")
+                    }
+
+                    ${
+                        rows.length
+                        ? ""
+                        : emptyRow(
+                            5,
+                            "No supplier payments found."
+                        )
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   PRINT
+========================================================= */
+
+function printReport(){
+
+    window.print();
+
+}
+
+
+/* =========================================================
+   PDF
+========================================================= */
+
+function downloadPDF(){
+
+    const jsPDF =
+        window.jspdf &&
+        window.jspdf.jsPDF;
+
+
+    if(!jsPDF){
+
+        alert(
+            "PDF library could not load."
+        );
+
+        return;
+
+    }
+
+
+    const doc =
+        new jsPDF(
+            "l",
+            "mm",
+            "a4"
+        );
+
+
+    const title =
+        document.getElementById(
+            "reportTitle"
+        ).textContent;
+
+
+    const body =
+        document.getElementById(
+            "reportBody"
+        );
+
+
+    const table =
+        body.querySelector(
+            "table"
+        );
+
+
+    if(!table){
+
+        alert(
+            "No report data available."
+        );
+
+        return;
+
+    }
+
+
+    doc.setFillColor(
+        23,
+        23,
+        23
+    );
+
+    doc.rect(
+        0,
+        0,
+        297,
+        25,
+        "F"
+    );
+
+
+    doc.setTextColor(
+        255,
+        255,
+        255
+    );
+
+    doc.setFont(
+        "helvetica",
+        "bold"
+    );
+
+    doc.setFontSize(18);
+
+    doc.text(
+        "BOMBAY NX",
+        14,
+        11
+    );
+
+
+    doc.setFont(
+        "helvetica",
+        "normal"
+    );
+
+    doc.setFontSize(10);
+
+    doc.text(
+        title,
+        14,
+        19
+    );
+
+
+    doc.setTextColor(
+        40,
+        40,
+        40
+    );
+
+
+    const rows = [];
+
+
+    const trs =
+        table.querySelectorAll(
+            "tbody tr"
+        );
+
+
+    trs.forEach(tr => {
+
+        const tds =
+            tr.querySelectorAll(
+                "td"
+            );
+
+
+        if(!tds.length)
+            return;
+
+
+        const row = [];
+
+
+        tds.forEach(td => {
+
+            row.push(
+                td.innerText
+                    .replace(/₹/g,"Rs. ")
+                    .replace(/\s+/g," ")
+                    .trim()
+            );
+
+        });
+
+
+        rows.push(row);
+
+    });
+
+
+    const headers = [];
+
+
+    table.querySelectorAll(
+        "thead th"
+    ).forEach(th => {
+
+        headers.push(
+            th.innerText.trim()
+        );
+
+    });
+
+
+    const amountIndexes = [];
+
+
+    headers.forEach(
+        (h,index) => {
+
+            const text =
+                h.toLowerCase();
+
+
+            if(
+                text.includes("amount") ||
+                text.includes("total") ||
+                text.includes("paid") ||
+                text.includes("balance") ||
+                text.includes("income") ||
+                text.includes("purchase") ||
+                text.includes("payment")
+            ){
+
+                amountIndexes.push(index);
+
+            }
+
+        }
+    );
+
+
+    const columnStyles = {};
+
+
+    amountIndexes.forEach(
+        index => {
+
+            columnStyles[index] = {
+
+                halign:"right",
+
+                cellWidth:28
+
+            };
+
+        }
+    );
+
+
+    doc.autoTable({
+
+        startY:31,
+
+        head:[
+            headers
+        ],
+
+        body:rows,
+
+        theme:"grid",
+
+        margin:{
+            left:10,
+            right:10
+        },
+
+        styles:{
+
+            font:"helvetica",
+
+            fontSize:8,
+
+            cellPadding:3,
+
+            overflow:"linebreak",
+
+            valign:"middle"
+
+        },
+
+        headStyles:{
+
+            fillColor:[
+                37,
+                37,
+                37
+            ],
+
+            textColor:[
+                255,
+                255,
+                255
+            ],
+
+            fontStyle:"bold"
+
+        },
+
+        columnStyles
+
+    });
+
+
+    const safe =
+        title
+            .replace(
+                /[^a-z0-9]+/gi,
+                "-"
+            )
+            .replace(
+                /^-|-$/g,
+                ""
+            );
+
+
+    doc.save(
+        "BOMBAY-NX-" +
+        safe +
+        ".pdf"
+    );
+
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+function goDashboard(){
+
+    window.location.href =
+        "dashboard.html";
+
+}
+
+
+async function logout(){
+
+    await db.auth.signOut();
+
+    window.location.href =
+        "owner-login.html";
+
+}
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+async function init(){
+
+    const loggedIn =
+        await checkAuth();
+
+    if(!loggedIn)
+        return;
+
+
+    await loadAllData();
+
+
+    renderCurrentReport();
+
+}
+
+
+window.addEventListener(
+    "load",
+    init
+);
+
+</script>
+
+</body>
+
+</html>

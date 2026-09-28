@@ -1,0 +1,2784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Customer Account | BOMBAY NX</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f4f1ea;
+    color:#171717;
+}
+
+header{
+    background:#111;
+    color:#f5d98a;
+    padding:18px 25px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    position:sticky;
+    top:0;
+    z-index:50;
+    box-shadow:0 3px 15px rgba(0,0,0,.18);
+}
+
+.logo{
+    font-size:24px;
+    font-weight:900;
+    letter-spacing:2px;
+}
+
+.header-actions{
+    display:flex;
+    gap:8px;
+}
+
+button{
+    cursor:pointer;
+    font-family:inherit;
+}
+
+.btn{
+    border:0;
+    border-radius:8px;
+    padding:10px 15px;
+    font-weight:800;
+}
+
+.btn-gold{
+    background:#f5d98a;
+    color:#111;
+}
+
+.btn-dark{
+    background:#111;
+    color:#f5d98a;
+}
+
+.btn-light{
+    background:#fff;
+    color:#111;
+    border:1px solid #ddd;
+}
+
+.btn-red{
+    background:#b3261e;
+    color:#fff;
+}
+
+.container{
+    width:min(1400px,94%);
+    margin:25px auto 60px;
+}
+
+.title{
+    margin-bottom:20px;
+}
+
+.title h1{
+    font-size:30px;
+}
+
+.title p{
+    color:#777;
+    margin-top:5px;
+}
+
+.search-box{
+    background:#fff;
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:22px;
+    box-shadow:0 2px 10px rgba(0,0,0,.06);
+}
+
+.search-box input{
+    width:100%;
+    padding:13px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    font-size:15px;
+}
+
+.section-title{
+    font-size:20px;
+    font-weight:800;
+    margin-bottom:12px;
+}
+
+.customer-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(245px,1fr));
+    gap:15px;
+}
+
+.customer-card{
+    background:#fff;
+    border:1px solid #e3ddd0;
+    border-radius:14px;
+    padding:18px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.customer-card:hover{
+    transform:translateY(-2px);
+    border-color:#c9a84e;
+    box-shadow:0 5px 18px rgba(0,0,0,.1);
+}
+
+.customer-name{
+    font-size:18px;
+    font-weight:900;
+}
+
+.customer-mobile{
+    color:#777;
+    margin-top:5px;
+}
+
+.customer-info{
+    display:flex;
+    justify-content:space-between;
+    margin-top:15px;
+    padding-top:12px;
+    border-top:1px solid #eee;
+}
+
+.customer-info div{
+    text-align:center;
+}
+
+.customer-info small{
+    display:block;
+    color:#777;
+    font-size:11px;
+}
+
+.customer-info strong{
+    display:block;
+    margin-top:4px;
+}
+
+.account{
+    display:none;
+    margin-top:25px;
+}
+
+.account-top{
+    background:#111;
+    color:#fff;
+    padding:20px;
+    border-radius:14px 14px 0 0;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+}
+
+.account-top h2{
+    color:#f5d98a;
+}
+
+.account-top p{
+    color:#ddd;
+    margin-top:5px;
+}
+
+.summary{
+    background:#fff;
+    padding:15px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+}
+
+.summary-box{
+    border:1px solid #e2ddd3;
+    border-radius:10px;
+    padding:15px;
+}
+
+.summary-box span{
+    display:block;
+    color:#777;
+    font-size:13px;
+}
+
+.summary-box strong{
+    display:block;
+    font-size:21px;
+    margin-top:5px;
+}
+
+.table-box{
+    background:#fff;
+    overflow-x:auto;
+    border-radius:0 0 14px 14px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:760px;
+}
+
+th{
+    background:#eee9df;
+    padding:13px 10px;
+    text-align:left;
+    white-space:nowrap;
+    font-size:13px;
+}
+
+td{
+    padding:12px 10px;
+    border-top:1px solid #eee;
+    font-size:14px;
+}
+
+.balance{
+    font-weight:900;
+}
+
+.balance-due{
+    color:#b3261e;
+}
+
+.balance-paid{
+    color:#188038;
+}
+
+.empty{
+    background:#fff;
+    padding:30px;
+    text-align:center;
+    color:#777;
+    border-radius:12px;
+}
+
+.statement-actions{
+    background:#fff;
+    padding:15px;
+    border-top:1px solid #eee;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    border-radius:0 0 14px 14px;
+}
+
+
+/* MODAL */
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.68);
+    z-index:100;
+    overflow:auto;
+    padding:25px 12px;
+}
+
+.modal-box{
+    width:min(950px,100%);
+    margin:auto;
+    background:#fff;
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:0 15px 50px rgba(0,0,0,.4);
+}
+
+.modal-head{
+    background:#111;
+    color:#fff;
+    padding:18px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.modal-head h2{
+    color:#f5d98a;
+}
+
+.close{
+    width:36px;
+    height:36px;
+    border:0;
+    border-radius:50%;
+    background:#333;
+    color:#fff;
+    font-size:20px;
+}
+
+.modal-body{
+    padding:22px;
+}
+
+
+/* BILL DETAILS */
+
+.bill-head{
+    border-bottom:2px solid #111;
+    padding-bottom:15px;
+}
+
+.bill-head h1{
+    font-size:25px;
+}
+
+.bill-head p{
+    margin-top:5px;
+    color:#666;
+}
+
+.bill-grid{
+    margin-top:18px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    border:1px solid #222;
+}
+
+.bill-grid div{
+    padding:10px;
+    border-right:1px solid #222;
+}
+
+.bill-grid div:last-child{
+    border-right:0;
+}
+
+.bill-grid small{
+    display:block;
+    color:#666;
+    font-size:11px;
+}
+
+.bill-grid strong{
+    display:block;
+    margin-top:4px;
+}
+
+
+/* PAYMENT */
+
+.payment-section{
+    margin-top:25px;
+}
+
+.payment-section h3{
+    margin-bottom:12px;
+}
+
+.payment-form{
+    background:#f7f4ee;
+    padding:15px;
+    border-radius:10px;
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr 1.5fr auto;
+    gap:10px;
+    align-items:end;
+}
+
+.field label{
+    display:block;
+    font-size:12px;
+    font-weight:800;
+    margin-bottom:5px;
+}
+
+.field input,
+.field select{
+    width:100%;
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:7px;
+}
+
+.payment-table{
+    margin-top:15px;
+}
+
+.payment-edit{
+    background:#111;
+    color:#f5d98a;
+    border:0;
+    padding:6px 9px;
+    border-radius:6px;
+    margin-right:5px;
+}
+
+.payment-delete{
+    background:#b3261e;
+    color:#fff;
+    border:0;
+    padding:6px 9px;
+    border-radius:6px;
+}
+
+.modal-footer{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+    flex-wrap:wrap;
+}
+
+
+/* COMBINED STATEMENT PRINT */
+
+.statement-print{
+    display:none;
+}
+
+.statement-paper{
+    background:#fff;
+    padding:25px;
+}
+
+.statement-shop{
+    text-align:center;
+    font-size:28px;
+    font-weight:900;
+    letter-spacing:2px;
+}
+
+.statement-title{
+    text-align:center;
+    margin-top:5px;
+    font-size:14px;
+    font-weight:800;
+    letter-spacing:1px;
+}
+
+.statement-customer{
+    margin-top:22px;
+    padding-bottom:12px;
+    border-bottom:2px solid #111;
+    font-size:17px;
+    font-weight:800;
+}
+
+.statement-summary{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin:15px 0;
+}
+
+.statement-summary div{
+    border:1px solid #222;
+    padding:12px;
+    text-align:center;
+}
+
+.statement-summary small{
+    display:block;
+    font-size:11px;
+}
+
+.statement-summary strong{
+    display:block;
+    margin-top:5px;
+    font-size:17px;
+}
+
+.statement-paper table{
+    min-width:0;
+}
+
+.statement-paper th,
+.statement-paper td{
+    border:1px solid #222;
+}
+
+.statement-footer{
+    margin-top:25px;
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+    color:#555;
+}
+
+
+/* RESPONSIVE */
+
+@media(max-width:800px){
+
+    .summary{
+        grid-template-columns:1fr;
+    }
+
+    .account-top{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .bill-grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .payment-form{
+        grid-template-columns:1fr;
+    }
+}
+
+
+/* PRINT */
+
+@media print{
+
+    body{
+        background:#fff;
+    }
+
+    header,
+    .container,
+    .modal{
+        display:none !important;
+    }
+
+    .statement-print{
+        display:block !important;
+    }
+
+    .statement-paper{
+        width:100%;
+        padding:10px;
+    }
+
+    @page{
+        size:A4;
+        margin:12mm;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        BOMBAY NX
+    </div>
+
+    <div class="header-actions">
+
+        <button
+            class="btn btn-gold"
+            onclick="goDashboard()"
+        >
+            ← Dashboard
+        </button>
+
+        <button
+            class="btn btn-light"
+            onclick="logout()"
+        >
+            Logout
+        </button>
+
+    </div>
+
+</header>
+
+
+<div class="container">
+
+    <div class="title">
+
+        <h1>Customer Account</h1>
+
+        <p>
+            Customer-wise combined statement & bill-wise payment adjustment
+        </p>
+
+    </div>
+
+
+    <!-- OPTIONAL SEARCH -->
+
+    <div class="search-box">
+
+        <input
+            type="text"
+            id="customerSearch"
+            placeholder="Optional: Search customer..."
+            oninput="filterCustomers()"
+        >
+
+    </div>
+
+
+    <div class="section-title">
+        Customers
+    </div>
+
+
+    <div
+        id="customerGrid"
+        class="customer-grid"
+    >
+        <div class="empty">
+            Loading customers...
+        </div>
+    </div>
+
+
+    <!-- CUSTOMER ACCOUNT -->
+
+    <div
+        id="account"
+        class="account"
+    >
+
+        <div class="account-top">
+
+            <div>
+
+                <h2 id="accountCustomerName">
+                    Customer
+                </h2>
+
+                <p id="accountCustomerMobile"></p>
+
+            </div>
+
+            <button
+                class="btn btn-gold"
+                onclick="closeCustomer()"
+            >
+                Close
+            </button>
+
+        </div>
+
+
+        <div class="summary">
+
+            <div class="summary-box">
+
+                <span>
+                    Total Sales
+                </span>
+
+                <strong id="summarySales">
+                    ₹0.00
+                </strong>
+
+            </div>
+
+
+            <div class="summary-box">
+
+                <span>
+                    Total Paid
+                </span>
+
+                <strong id="summaryPaid">
+                    ₹0.00
+                </strong>
+
+            </div>
+
+
+            <div class="summary-box">
+
+                <span>
+                    Total Balance
+                </span>
+
+                <strong id="summaryBalance">
+                    ₹0.00
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-box">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Bill Date
+                        </th>
+
+                        <th>
+                            Bill No.
+                        </th>
+
+                        <th>
+                            Total Amount
+                        </th>
+
+                        <th>
+                            Paid Amount
+                        </th>
+
+                        <th>
+                            Balance
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="billRows"></tbody>
+
+            </table>
+
+        </div>
+
+
+        <div class="statement-actions">
+
+            <button
+                class="btn btn-gold"
+                onclick="printCombinedStatement()"
+            >
+                🖨️ Print Customer Statement
+            </button>
+
+            <button
+                class="btn btn-dark"
+                onclick="window.print()"
+            >
+                📄 PDF / Print
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- BILL-WISE MODAL -->
+
+<div
+    id="billModal"
+    class="modal"
+>
+
+    <div class="modal-box">
+
+        <div class="modal-head">
+
+            <h2>
+                Bill Account
+            </h2>
+
+            <button
+                class="close"
+                onclick="closeBill()"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="modal-body">
+
+            <div class="bill-head">
+
+                <h1>
+                    BOMBAY NX
+                </h1>
+
+                <p>
+                    Bill-wise Customer Account
+                </p>
+
+                <p>
+                    Customer:
+                    <strong id="modalCustomer"></strong>
+                </p>
+
+            </div>
+
+
+            <div class="bill-grid">
+
+                <div>
+
+                    <small>
+                        Bill Date
+                    </small>
+
+                    <strong id="modalDate">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <small>
+                        Bill No.
+                    </small>
+
+                    <strong id="modalBillNo">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <small>
+                        Total Amount
+                    </small>
+
+                    <strong id="modalTotal">
+                        ₹0.00
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <small>
+                        Balance
+                    </small>
+
+                    <strong id="modalBalance">
+                        ₹0.00
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="payment-section">
+
+                <h3>
+                    Payment History
+                </h3>
+
+
+                <div class="payment-form">
+
+                    <div class="field">
+
+                        <label>
+                            Payment Date
+                        </label>
+
+                        <input
+                            type="date"
+                            id="paymentDate"
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Amount
+                        </label>
+
+                        <input
+                            type="number"
+                            id="paymentAmount"
+                            min="0"
+                            step="0.01"
+                            placeholder="0.00"
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Mode
+                        </label>
+
+                        <select id="paymentMode">
+
+                            <option value="CASH">
+                                Cash
+                            </option>
+
+                            <option value="UPI">
+                                UPI
+                            </option>
+
+                            <option value="BANK">
+                                Bank
+                            </option>
+
+                            <option value="CARD">
+                                Card
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Notes
+                        </label>
+
+                        <input
+                            type="text"
+                            id="paymentNotes"
+                            placeholder="Optional"
+                        >
+
+                    </div>
+
+
+                    <button
+                        id="paymentButton"
+                        class="btn btn-dark"
+                        onclick="savePayment()"
+                    >
+                        Add Payment
+                    </button>
+
+                </div>
+
+
+                <div class="table-box payment-table">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Date
+                                </th>
+
+                                <th>
+                                    Payment
+                                </th>
+
+                                <th>
+                                    Mode
+                                </th>
+
+                                <th>
+                                    Notes
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="paymentRows"></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    class="btn btn-light"
+                    onclick="openBilling()"
+                >
+                    🧾 Open Billing
+                </button>
+
+                <button
+                    class="btn btn-gold"
+                    onclick="closeBill()"
+                >
+                    Done
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- COMBINED STATEMENT PRINT AREA -->
+
+<div
+    id="statementPrint"
+    class="statement-print"
+>
+
+    <div class="statement-paper">
+
+        <div class="statement-shop">
+            BOMBAY NX
+        </div>
+
+        <div class="statement-title">
+            CUSTOMER STATEMENT
+        </div>
+
+
+        <div class="statement-customer">
+
+            Customer Name:
+            <span id="printCustomerName"></span>
+
+            <br>
+
+            Mobile:
+            <span id="printCustomerMobile"></span>
+
+        </div>
+
+
+        <div class="statement-summary">
+
+            <div>
+
+                <small>
+                    Total Sales
+                </small>
+
+                <strong id="printTotalSales">
+                    ₹0.00
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <small>
+                    Total Paid
+                </small>
+
+                <strong id="printTotalPaid">
+                    ₹0.00
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <small>
+                    Balance
+                </small>
+
+                <strong id="printBalance">
+                    ₹0.00
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Bill Date
+                    </th>
+
+                    <th>
+                        Bill No.
+                    </th>
+
+                    <th>
+                        Total Amount
+                    </th>
+
+                    <th>
+                        Paid Amount
+                    </th>
+
+                    <th>
+                        Balance
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="printBillRows"></tbody>
+
+        </table>
+
+
+        <div class="statement-footer">
+
+            <span>
+                BOMBAY NX
+            </span>
+
+            <span>
+                Customer Account Statement
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* ==============================
+   SUPABASE
+============================== */
+
+const SUPABASE_URL =
+    "https://tetihwttelthoyeidwhl.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_RoeCtLr9AhiOqKJq_zMXOA_txz_hOy7";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+let customers = [];
+
+let selectedCustomer = null;
+
+let customerBills = [];
+
+let selectedBill = null;
+
+let editingPaymentId = null;
+
+
+/* ==============================
+   HELPERS
+============================== */
+
+function money(value){
+
+    return "₹" +
+        Number(value || 0).toLocaleString(
+            "en-IN",
+            {
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
+            }
+        );
+}
+
+
+function dateDisplay(value){
+
+    if(!value) return "-";
+
+    const d =
+        new Date(
+            String(value).slice(0,10)
+            + "T00:00:00"
+        );
+
+    if(Number.isNaN(d.getTime()))
+        return String(value);
+
+    return String(d.getDate()).padStart(2,"0")
+        + "-"
+        + String(d.getMonth()+1).padStart(2,"0")
+        + "-"
+        + d.getFullYear();
+}
+
+
+function today(){
+
+    const d = new Date();
+
+    return d.getFullYear()
+        + "-"
+        + String(d.getMonth()+1).padStart(2,"0")
+        + "-"
+        + String(d.getDate()).padStart(2,"0");
+}
+
+
+function escapeHtml(value){
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        value == null ? "" : String(value);
+
+    return div.innerHTML;
+}
+
+
+/* ==============================
+   LOGIN
+============================== */
+
+async function checkLogin(){
+
+    const result =
+        await supabaseClient.auth.getSession();
+
+    if(!result.data.session){
+
+        window.location.href =
+            "owner-login.html";
+
+        return false;
+    }
+
+    return true;
+}
+
+
+async function logout(){
+
+    await supabaseClient.auth.signOut();
+
+    window.location.href =
+        "owner-login.html";
+}
+
+
+function goDashboard(){
+
+    window.location.href =
+        "dashboard.html";
+}
+
+
+/* ==============================
+   LOAD ALL CUSTOMERS
+============================== */
+
+async function loadCustomers(){
+
+    const grid =
+        document.getElementById(
+            "customerGrid"
+        );
+
+
+    const result =
+        await supabaseClient
+            .from("sales")
+            .select(
+                "customer_name,customer_mobile,final_amount,paid_amount"
+            )
+            .not(
+                "customer_name",
+                "is",
+                null
+            )
+            .order(
+                "customer_name",
+                {
+                    ascending:true
+                }
+            );
+
+
+    if(result.error){
+
+        grid.innerHTML =
+            `<div class="empty">
+                ${escapeHtml(
+                    result.error.message
+                )}
+            </div>`;
+
+        return;
+    }
+
+
+    const map = new Map();
+
+
+    for(const sale of result.data || []){
+
+        const name =
+            String(
+                sale.customer_name || ""
+            ).trim();
+
+
+        if(!name) continue;
+
+
+        const mobile =
+            String(
+                sale.customer_mobile || ""
+            ).trim();
+
+
+        const key =
+            name.toLowerCase()
+            + "|"
+            + mobile;
+
+
+        if(!map.has(key)){
+
+            map.set(
+                key,
+                {
+                    name:name,
+                    mobile:mobile,
+                    bills:0,
+                    sales:0,
+                    paid:0
+                }
+            );
+        }
+
+
+        const customer =
+            map.get(key);
+
+
+        customer.bills++;
+
+        customer.sales +=
+            Number(
+                sale.final_amount || 0
+            );
+
+        customer.paid +=
+            Number(
+                sale.paid_amount || 0
+            );
+    }
+
+
+    customers =
+        Array.from(
+            map.values()
+        );
+
+
+    renderCustomers(
+        customers
+    );
+}
+
+
+/* ==============================
+   CUSTOMER CARDS
+============================== */
+
+function renderCustomers(list){
+
+    const grid =
+        document.getElementById(
+            "customerGrid"
+        );
+
+
+    if(!list.length){
+
+        grid.innerHTML =
+            `<div class="empty">
+                No customers found.
+            </div>`;
+
+        return;
+    }
+
+
+    grid.innerHTML =
+        list.map(
+            (customer,index) => {
+
+                const balance =
+                    Math.max(
+                        0,
+                        customer.sales
+                        -
+                        customer.paid
+                    );
+
+
+                return `
+                <div
+                    class="customer-card"
+                    onclick="selectCustomer(${index})"
+                >
+
+                    <div class="customer-name">
+                        ${escapeHtml(customer.name)}
+                    </div>
+
+                    <div class="customer-mobile">
+                        ${
+                            escapeHtml(
+                                customer.mobile
+                            )
+                            ||
+                            "Mobile not available"
+                        }
+                    </div>
+
+                    <div class="customer-info">
+
+                        <div>
+                            <small>Bills</small>
+                            <strong>
+                                ${customer.bills}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <small>Sales</small>
+                            <strong>
+                                ${money(customer.sales)}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <small>Balance</small>
+                            <strong class="${
+                                balance > 0
+                                ? "balance balance-due"
+                                : "balance balance-paid"
+                            }">
+                                ${money(balance)}
+                            </strong>
+                        </div>
+
+                    </div>
+
+                </div>
+                `;
+            }
+        ).join("");
+}
+
+
+/* ==============================
+   OPTIONAL SEARCH
+============================== */
+
+function filterCustomers(){
+
+    const text =
+        document.getElementById(
+            "customerSearch"
+        ).value
+        .trim()
+        .toLowerCase();
+
+
+    if(!text){
+
+        renderCustomers(
+            customers
+        );
+
+        return;
+    }
+
+
+    renderCustomers(
+        customers.filter(
+            customer =>
+                customer.name
+                    .toLowerCase()
+                    .includes(text)
+                ||
+                customer.mobile
+                    .toLowerCase()
+                    .includes(text)
+        )
+    );
+}
+
+
+/* ==============================
+   CUSTOMER SELECT
+============================== */
+
+async function selectCustomer(index){
+
+    const text =
+        document.getElementById(
+            "customerSearch"
+        ).value
+        .trim()
+        .toLowerCase();
+
+
+    let list =
+        customers;
+
+
+    if(text){
+
+        list =
+            customers.filter(
+                customer =>
+                    customer.name
+                        .toLowerCase()
+                        .includes(text)
+                    ||
+                    customer.mobile
+                        .toLowerCase()
+                        .includes(text)
+            );
+    }
+
+
+    selectedCustomer =
+        list[index];
+
+
+    if(!selectedCustomer)
+        return;
+
+
+    document.getElementById(
+        "accountCustomerName"
+    ).textContent =
+        selectedCustomer.name;
+
+
+    document.getElementById(
+        "accountCustomerMobile"
+    ).textContent =
+        selectedCustomer.mobile
+        ? "Mobile: " +
+          selectedCustomer.mobile
+        : "";
+
+
+    document.getElementById(
+        "account"
+    ).style.display =
+        "block";
+
+
+    await loadCustomerBills();
+
+
+    document.getElementById(
+        "account"
+    ).scrollIntoView({
+        behavior:"smooth"
+    });
+}
+
+
+/* ==============================
+   LOAD CUSTOMER BILLS
+============================== */
+
+async function loadCustomerBills(){
+
+    if(!selectedCustomer)
+        return;
+
+
+    let query =
+        supabaseClient
+            .from("sales")
+            .select(`
+                id,
+                bill_no,
+                customer_name,
+                customer_mobile,
+                bill_date,
+                final_amount,
+                paid_amount,
+                pending_amount,
+                payment_status
+            `)
+            .eq(
+                "customer_name",
+                selectedCustomer.name
+            );
+
+
+    if(selectedCustomer.mobile){
+
+        query =
+            query.eq(
+                "customer_mobile",
+                selectedCustomer.mobile
+            );
+    }
+
+
+    const result =
+        await query.order(
+            "bill_date",
+            {
+                ascending:true
+            }
+        );
+
+
+    if(result.error){
+
+        document.getElementById(
+            "billRows"
+        ).innerHTML =
+            `<tr>
+                <td colspan="6">
+                    ${escapeHtml(
+                        result.error.message
+                    )}
+                </td>
+            </tr>`;
+
+        return;
+    }
+
+
+    customerBills =
+        result.data || [];
+
+
+    renderCustomerBills();
+    prepareCombinedStatement();
+}
+
+
+/* ==============================
+   CUSTOMER BILL TABLE
+============================== */
+
+function renderCustomerBills(){
+
+    const body =
+        document.getElementById(
+            "billRows"
+        );
+
+
+    if(!customerBills.length){
+
+        body.innerHTML =
+            `<tr>
+                <td colspan="6">
+                    No bills found.
+                </td>
+            </tr>`;
+
+        return;
+    }
+
+
+    let totalSales = 0;
+    let totalPaid = 0;
+
+
+    body.innerHTML =
+        customerBills.map(
+            bill => {
+
+                const total =
+                    Number(
+                        bill.final_amount || 0
+                    );
+
+                const paid =
+                    Number(
+                        bill.paid_amount || 0
+                    );
+
+                const balance =
+                    Math.max(
+                        0,
+                        total - paid
+                    );
+
+
+                totalSales += total;
+                totalPaid += paid;
+
+
+                return `
+                <tr>
+
+                    <td>
+                        ${dateDisplay(
+                            bill.bill_date
+                        )}
+                    </td>
+
+                    <td>
+                        <strong>
+                            ${escapeHtml(
+                                bill.bill_no
+                            )}
+                        </strong>
+                    </td>
+
+                    <td>
+                        ${money(total)}
+                    </td>
+
+                    <td>
+                        ${money(paid)}
+                    </td>
+
+                    <td class="${
+                        balance > 0
+                        ? "balance balance-due"
+                        : "balance balance-paid"
+                    }">
+                        ${money(balance)}
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="btn btn-dark"
+                            onclick="openBill(${bill.id})"
+                        >
+                            Open
+                        </button>
+
+                    </td>
+
+                </tr>
+                `;
+            }
+        ).join("");
+
+
+    document.getElementById(
+        "summarySales"
+    ).textContent =
+        money(totalSales);
+
+
+    document.getElementById(
+        "summaryPaid"
+    ).textContent =
+        money(totalPaid);
+
+
+    document.getElementById(
+        "summaryBalance"
+    ).textContent =
+        money(
+            Math.max(
+                0,
+                totalSales - totalPaid
+            )
+        );
+}
+
+
+/* ==============================
+   COMBINED STATEMENT
+============================== */
+
+function prepareCombinedStatement(){
+
+    if(!selectedCustomer)
+        return;
+
+
+    document.getElementById(
+        "printCustomerName"
+    ).textContent =
+        selectedCustomer.name;
+
+
+    document.getElementById(
+        "printCustomerMobile"
+    ).textContent =
+        selectedCustomer.mobile
+        || "-";
+
+
+    let totalSales = 0;
+    let totalPaid = 0;
+
+
+    const rows =
+        customerBills.map(
+            bill => {
+
+                const total =
+                    Number(
+                        bill.final_amount || 0
+                    );
+
+                const paid =
+                    Number(
+                        bill.paid_amount || 0
+                    );
+
+                const balance =
+                    Math.max(
+                        0,
+                        total - paid
+                    );
+
+
+                totalSales += total;
+                totalPaid += paid;
+
+
+                return `
+                <tr>
+
+                    <td>
+                        ${dateDisplay(
+                            bill.bill_date
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            bill.bill_no
+                        )}
+                    </td>
+
+                    <td>
+                        ${money(total)}
+                    </td>
+
+                    <td>
+                        ${money(paid)}
+                    </td>
+
+                    <td>
+                        ${money(balance)}
+                    </td>
+
+                </tr>
+                `;
+            }
+        ).join("");
+
+
+    document.getElementById(
+        "printBillRows"
+    ).innerHTML =
+        rows;
+
+
+    document.getElementById(
+        "printTotalSales"
+    ).textContent =
+        money(totalSales);
+
+
+    document.getElementById(
+        "printTotalPaid"
+    ).textContent =
+        money(totalPaid);
+
+
+    document.getElementById(
+        "printBalance"
+    ).textContent =
+        money(
+            Math.max(
+                0,
+                totalSales - totalPaid
+            )
+        );
+}
+
+
+function printCombinedStatement(){
+
+    if(!selectedCustomer){
+
+        alert(
+            "Please select customer first."
+        );
+
+        return;
+    }
+
+
+    prepareCombinedStatement();
+
+
+    const oldTitle =
+        document.title;
+
+
+    document.title =
+        "Customer Statement - "
+        + selectedCustomer.name;
+
+
+    window.print();
+
+
+    setTimeout(
+        () => {
+            document.title =
+                oldTitle;
+        },
+        1000
+    );
+}
+
+
+/* ==============================
+   OPEN SINGLE BILL
+============================== */
+
+async function openBill(id){
+
+    const result =
+        await supabaseClient
+            .from("sales")
+            .select(`
+                id,
+                bill_no,
+                customer_name,
+                bill_date,
+                final_amount,
+                paid_amount,
+                pending_amount,
+                payment_status
+            `)
+            .eq(
+                "id",
+                id
+            )
+            .single();
+
+
+    if(result.error){
+
+        alert(
+            result.error.message
+        );
+
+        return;
+    }
+
+
+    selectedBill =
+        result.data;
+
+
+    editingPaymentId =
+        null;
+
+
+    document.getElementById(
+        "modalCustomer"
+    ).textContent =
+        selectedBill.customer_name;
+
+
+    document.getElementById(
+        "modalDate"
+    ).textContent =
+        dateDisplay(
+            selectedBill.bill_date
+        );
+
+
+    document.getElementById(
+        "modalBillNo"
+    ).textContent =
+        selectedBill.bill_no;
+
+
+    document.getElementById(
+        "modalTotal"
+    ).textContent =
+        money(
+            selectedBill.final_amount
+        );
+
+
+    updateModalBalance();
+
+
+    document.getElementById(
+        "paymentDate"
+    ).value =
+        today();
+
+
+    document.getElementById(
+        "paymentAmount"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "paymentMode"
+    ).value =
+        "CASH";
+
+
+    document.getElementById(
+        "paymentNotes"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "paymentButton"
+    ).textContent =
+        "Add Payment";
+
+
+    document.getElementById(
+        "billModal"
+    ).style.display =
+        "block";
+
+
+    await loadPayments();
+}
+
+
+function updateModalBalance(){
+
+    if(!selectedBill)
+        return;
+
+
+    const total =
+        Number(
+            selectedBill.final_amount || 0
+        );
+
+    const paid =
+        Number(
+            selectedBill.paid_amount || 0
+        );
+
+
+    document.getElementById(
+        "modalBalance"
+    ).textContent =
+        money(
+            Math.max(
+                0,
+                total - paid
+            )
+        );
+}
+
+
+/* ==============================
+   LOAD PAYMENT HISTORY
+============================== */
+
+async function loadPayments(){
+
+    if(!selectedBill)
+        return;
+
+
+    const body =
+        document.getElementById(
+            "paymentRows"
+        );
+
+
+    const result =
+        await supabaseClient
+            .from("sale_payments")
+            .select(`
+                id,
+                payment_date,
+                payment_amount,
+                payment_mode,
+                notes
+            `)
+            .eq(
+                "sale_id",
+                selectedBill.id
+            )
+            .order(
+                "payment_date",
+                {
+                    ascending:true
+                }
+            );
+
+
+    if(result.error){
+
+        body.innerHTML =
+            `<tr>
+                <td colspan="5">
+                    ${escapeHtml(
+                        result.error.message
+                    )}
+                </td>
+            </tr>`;
+
+        return;
+    }
+
+
+    const payments =
+        result.data || [];
+
+
+    if(!payments.length){
+
+        body.innerHTML =
+            `<tr>
+                <td colspan="5">
+                    No payment received yet.
+                </td>
+            </tr>`;
+
+        return;
+    }
+
+
+    body.innerHTML =
+        payments.map(
+            payment => {
+
+                return `
+                <tr>
+
+                    <td>
+                        ${dateDisplay(
+                            payment.payment_date
+                        )}
+                    </td>
+
+                    <td>
+                        ${money(
+                            payment.payment_amount
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            payment.payment_mode || "-"
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            payment.notes || "-"
+                        )}
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="payment-edit"
+                            onclick="editPayment(${payment.id})"
+                        >
+                            Edit
+                        </button>
+
+                        <button
+                            class="payment-delete"
+                            onclick="deletePayment(${payment.id})"
+                        >
+                            Delete
+                        </button>
+
+                    </td>
+
+                </tr>
+                `;
+            }
+        ).join("");
+}
+
+
+/* ==============================
+   ADD / UPDATE PAYMENT
+============================== */
+
+async function savePayment(){
+
+    if(!selectedBill)
+        return;
+
+
+    const date =
+        document.getElementById(
+            "paymentDate"
+        ).value;
+
+
+    const amount =
+        Number(
+            document.getElementById(
+                "paymentAmount"
+            ).value
+        );
+
+
+    const mode =
+        document.getElementById(
+            "paymentMode"
+        ).value;
+
+
+    const notes =
+        document.getElementById(
+            "paymentNotes"
+        ).value.trim();
+
+
+    if(!date){
+
+        alert(
+            "Please select payment date."
+        );
+
+        return;
+    }
+
+
+    if(amount <= 0){
+
+        alert(
+            "Please enter valid payment amount."
+        );
+
+        return;
+    }
+
+
+    const total =
+        Number(
+            selectedBill.final_amount || 0
+        );
+
+
+    const currentPaid =
+        Number(
+            selectedBill.paid_amount || 0
+        );
+
+
+    let newPaid =
+        currentPaid;
+
+
+    if(editingPaymentId){
+
+        const old =
+            await supabaseClient
+                .from("sale_payments")
+                .select("payment_amount")
+                .eq(
+                    "id",
+                    editingPaymentId
+                )
+                .single();
+
+
+        if(old.error){
+
+            alert(old.error.message);
+
+            return;
+        }
+
+
+        newPaid =
+            currentPaid
+            -
+            Number(
+                old.data.payment_amount || 0
+            )
+            +
+            amount;
+
+    }else{
+
+        newPaid =
+            currentPaid + amount;
+    }
+
+
+    if(newPaid > total){
+
+        alert(
+            "Payment cannot be more than bill amount."
+        );
+
+        return;
+    }
+
+
+    let result;
+
+
+    if(editingPaymentId){
+
+        result =
+            await supabaseClient
+                .from("sale_payments")
+                .update({
+                    payment_date:date,
+                    payment_amount:amount,
+                    payment_mode:mode,
+                    notes:notes
+                })
+                .eq(
+                    "id",
+                    editingPaymentId
+                );
+
+    }else{
+
+        result =
+            await supabaseClient
+                .from("sale_payments")
+                .insert({
+                    sale_id:selectedBill.id,
+                    payment_date:date,
+                    payment_amount:amount,
+                    payment_mode:mode,
+                    notes:notes
+                });
+    }
+
+
+    if(result.error){
+
+        alert(
+            "Payment save failed:\n"
+            + result.error.message
+        );
+
+        return;
+    }
+
+
+    await updateBillPaymentTotals(
+        newPaid
+    );
+
+
+    editingPaymentId =
+        null;
+
+
+    document.getElementById(
+        "paymentButton"
+    ).textContent =
+        "Add Payment";
+
+
+    document.getElementById(
+        "paymentAmount"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "paymentNotes"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "paymentDate"
+    ).value =
+        today();
+
+
+    await loadPayments();
+
+    await loadCustomerBills();
+}
+
+
+async function updateBillPaymentTotals(
+    paidAmount
+){
+
+    const total =
+        Number(
+            selectedBill.final_amount || 0
+        );
+
+
+    const balance =
+        Math.max(
+            0,
+            total - paidAmount
+        );
+
+
+    let status =
+        "PENDING";
+
+
+    if(paidAmount >= total){
+
+        status =
+            "PAID";
+
+    }else if(paidAmount > 0){
+
+        status =
+            "PARTIAL PAID";
+    }
+
+
+    const result =
+        await supabaseClient
+            .from("sales")
+            .update({
+                paid_amount:paidAmount,
+                pending_amount:balance,
+                payment_status:status
+            })
+            .eq(
+                "id",
+                selectedBill.id
+            );
+
+
+    if(result.error){
+
+        alert(
+            "Bill balance update failed:\n"
+            + result.error.message
+        );
+
+        return false;
+    }
+
+
+    selectedBill.paid_amount =
+        paidAmount;
+
+    selectedBill.pending_amount =
+        balance;
+
+    selectedBill.payment_status =
+        status;
+
+
+    updateModalBalance();
+
+    return true;
+}
+
+
+/* ==============================
+   EDIT PAYMENT
+============================== */
+
+async function editPayment(id){
+
+    const result =
+        await supabaseClient
+            .from("sale_payments")
+            .select(`
+                id,
+                payment_date,
+                payment_amount,
+                payment_mode,
+                notes
+            `)
+            .eq(
+                "id",
+                id
+            )
+            .single();
+
+
+    if(result.error){
+
+        alert(
+            result.error.message
+        );
+
+        return;
+    }
+
+
+    const payment =
+        result.data;
+
+
+    editingPaymentId =
+        payment.id;
+
+
+    document.getElementById(
+        "paymentDate"
+    ).value =
+        String(
+            payment.payment_date
+        ).slice(0,10);
+
+
+    document.getElementById(
+        "paymentAmount"
+    ).value =
+        payment.payment_amount;
+
+
+    document.getElementById(
+        "paymentMode"
+    ).value =
+        payment.payment_mode || "CASH";
+
+
+    document.getElementById(
+        "paymentNotes"
+    ).value =
+        payment.notes || "";
+
+
+    document.getElementById(
+        "paymentButton"
+    ).textContent =
+        "Update Payment";
+
+
+    document.getElementById(
+        "paymentDate"
+    ).scrollIntoView({
+        behavior:"smooth",
+        block:"center"
+    });
+}
+
+
+/* ==============================
+   DELETE PAYMENT
+============================== */
+
+async function deletePayment(id){
+
+    if(!confirm(
+        "Delete this payment?"
+    ))
+        return;
+
+
+    const result =
+        await supabaseClient
+            .from("sale_payments")
+            .select("payment_amount")
+            .eq(
+                "id",
+                id
+            )
+            .single();
+
+
+    if(result.error){
+
+        alert(
+            result.error.message
+        );
+
+        return;
+    }
+
+
+    const amount =
+        Number(
+            result.data.payment_amount || 0
+        );
+
+
+    const currentPaid =
+        Number(
+            selectedBill.paid_amount || 0
+        );
+
+
+    const newPaid =
+        Math.max(
+            0,
+            currentPaid - amount
+        );
+
+
+    const deleteResult =
+        await supabaseClient
+            .from("sale_payments")
+            .delete()
+            .eq(
+                "id",
+                id
+            );
+
+
+    if(deleteResult.error){
+
+        alert(
+            "Delete failed:\n"
+            + deleteResult.error.message
+        );
+
+        return;
+    }
+
+
+    await updateBillPaymentTotals(
+        newPaid
+    );
+
+
+    await loadPayments();
+
+    await loadCustomerBills();
+}
+
+
+/* ==============================
+   CLOSE BILL
+============================== */
+
+function closeBill(){
+
+    document.getElementById(
+        "billModal"
+    ).style.display =
+        "none";
+
+
+    selectedBill =
+        null;
+
+
+    editingPaymentId =
+        null;
+}
+
+
+/* ==============================
+   CLOSE CUSTOMER
+============================== */
+
+function closeCustomer(){
+
+    document.getElementById(
+        "account"
+    ).style.display =
+        "none";
+
+
+    selectedCustomer =
+        null;
+
+    customerBills =
+        [];
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+}
+
+
+/* ==============================
+   BILLING
+============================== */
+
+function openBilling(){
+
+    window.location.href =
+        "billing.html";
+}
+
+
+/* ==============================
+   INIT
+============================== */
+
+async function init(){
+
+    const ok =
+        await checkLogin();
+
+    if(!ok)
+        return;
+
+    await loadCustomers();
+}
+
+
+init();
+
+
+/* ==============================
+   OUTSIDE MODAL CLICK
+============================== */
+
+window.addEventListener(
+    "click",
+    function(event){
+
+        const modal =
+            document.getElementById(
+                "billModal"
+            );
+
+        if(event.target === modal){
+
+            closeBill();
+        }
+    }
+);
+
+</script>
+
+</body>
+</html>

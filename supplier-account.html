@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BOMBAY NX | Supplier Account</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f5f1e8;
+    color:#202020;
+}
+header{
+    height:64px;
+    background:#171717;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 24px;
+}
+.logo{
+    font-size:22px;
+    font-weight:800;
+    letter-spacing:2px;
+}
+.logo span{color:#d7a900}
+.header-actions{display:flex;gap:8px}
+button{
+    border:0;
+    border-radius:8px;
+    padding:10px 15px;
+    cursor:pointer;
+    font-weight:700;
+}
+.dark-btn{background:#242424;color:#fff;border:1px solid #444}
+.gold-btn{background:#d2a800;color:#fff}
+.light-btn{background:#e8e2d5;color:#222}
+.danger-btn{background:#b83232;color:#fff}
+.container{
+    max-width:1100px;
+    margin:28px auto;
+    padding:0 16px;
+}
+h1{margin:0;font-size:30px}
+.subtitle{color:#777;margin:5px 0 22px}
+.stats{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+    margin-bottom:18px;
+}
+.card{
+    background:#fff;
+    border-radius:14px;
+    padding:20px;
+    box-shadow:0 5px 18px rgba(0,0,0,.08);
+}
+.stat-label{font-size:13px;color:#777}
+.stat-value{font-size:25px;font-weight:800;margin-top:7px}
+.tabs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+    margin-bottom:16px;
+}
+.tab{
+    background:#e3ddcf;
+    color:#222;
+}
+.tab.active{background:#171717;color:#fff}
+.panel{
+    background:#fff;
+    border-radius:14px;
+    padding:20px;
+    box-shadow:0 5px 18px rgba(0,0,0,.08);
+}
+.tab-content{display:none}
+.tab-content.active{display:block}
+h2{font-size:20px;margin-top:0}
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+}
+label{
+    display:block;
+    font-size:13px;
+    font-weight:700;
+    margin-bottom:6px;
+}
+input,select,textarea{
+    width:100%;
+    padding:11px 12px;
+    border:1px solid #ddd4c5;
+    border-radius:8px;
+    background:#fffdf9;
+    outline:none;
+}
+textarea{min-height:80px;resize:vertical}
+.full{grid-column:1/-1}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
+.table-wrap{overflow:auto;margin-top:16px}
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:650px;
+}
+th{
+    background:#191919;
+    color:#fff;
+    text-align:left;
+    padding:11px;
+    font-size:13px;
+}
+td{
+    border-bottom:1px solid #eee6d9;
+    padding:10px;
+    font-size:13px;
+}
+.item-row{
+    display:grid;
+    grid-template-columns:1fr 180px 80px;
+    gap:8px;
+    margin-bottom:8px;
+}
+.total-box{
+    margin-top:15px;
+    padding:15px;
+    background:#f7f2e7;
+    border-radius:10px;
+    font-size:18px;
+    font-weight:800;
+}
+.supplier-list,.bill-list{
+    display:grid;
+    gap:8px;
+    margin-top:12px;
+}
+.select-card{
+    border:1px solid #ddd4c5;
+    border-radius:9px;
+    padding:12px;
+    background:#fffdf9;
+    cursor:pointer;
+}
+.select-card:hover{background:#f5f0e5}
+.notice{
+    padding:11px 13px;
+    border-radius:8px;
+    background:#f5f0e5;
+    margin-top:10px;
+    color:#555;
+}
+.hidden{display:none!important}
+.small{font-size:12px;color:#777}
+@media(max-width:700px){
+    .stats,.grid{grid-template-columns:1fr}
+    .item-row{grid-template-columns:1fr}
+    .container{margin-top:18px}
+    header{padding:0 12px}
+}
+@media print{
+    header,.tabs,.no-print{display:none!important}
+    body{background:#fff}
+    .container{max-width:none;margin:0}
+    .panel{box-shadow:none}
+}
+
+/* Premium supplier ledger report */
+.report-summary{
+    margin:16px 0;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    background:#faf8f2;
+    border:1px solid #e4dccb;
+    border-radius:12px;
+    padding:12px;
+    color:#333;
+    font-size:13px;
+}
+.report-summary .summary-item{
+    background:#fff;
+    border:1px solid #e8e1d4;
+    border-radius:10px;
+    padding:12px 14px;
+}
+.report-summary .summary-label{font-size:11px;color:#8a8376;text-transform:uppercase;letter-spacing:.8px}
+.report-summary .summary-value{font-size:17px;font-weight:800;margin-top:4px}
+.report-table-wrap{border:1px solid #ddd5c7;border-radius:10px;overflow:hidden}
+.report-ledger-table{width:100%;border-collapse:collapse;background:#fff}
+.report-ledger-table th{background:#252525;color:#f7f3ea;font-size:12px;letter-spacing:.3px;padding:11px 12px;text-align:left}
+.report-ledger-table td{padding:10px 12px;border-bottom:1px solid #eee8dd;font-size:12px;vertical-align:middle}
+.report-ledger-table tbody tr:nth-child(even){background:#fcfaf6}
+.report-ledger-table td:nth-child(4),.report-ledger-table td:nth-child(5),.report-ledger-table td:nth-child(6),
+.report-ledger-table th:nth-child(4),.report-ledger-table th:nth-child(5),.report-ledger-table th:nth-child(6){text-align:right}
+.ledger-purchase{font-weight:800;color:#8b6a00}
+.ledger-payment{font-weight:800;color:#16734b}
+@media(max-width:760px){.report-summary{grid-template-columns:repeat(2,1fr)}.report-table-wrap{overflow-x:auto}.report-ledger-table{min-width:720px}}
+
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">BOMBAY <span>NX</span></div>
+    <div class="header-actions">
+        <button class="dark-btn" onclick="goDashboard()">Dashboard</button>
+        <button class="dark-btn" onclick="logout()">Logout</button>
+    </div>
+</header>
+
+<div class="container">
+    <h1>Supplier Account</h1>
+    <div class="subtitle">Purchase • Payment • Return • History</div>
+
+    <div class="stats">
+        <div class="card">
+            <div class="stat-label">Total Purchase</div>
+            <div class="stat-value" id="statPurchase">₹0.00</div>
+        </div>
+        <div class="card">
+            <div class="stat-label">Total Paid</div>
+            <div class="stat-value" id="statPaid">₹0.00</div>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" onclick="openTab('suppliers',this)">Suppliers</button>
+        <button class="tab" onclick="openTab('newSupplier',this)">+ New Supplier</button>
+        <button class="tab" onclick="openTab('purchase',this)">New Purchase</button>
+        <button class="tab" onclick="openTab('payment',this)">Payment</button>
+        <button class="tab" onclick="openTab('report',this)">Supplier Report</button>
+        <button class="tab" onclick="openTab('return',this)">Supplier Return</button>
+        <button class="tab" onclick="openTab('history',this)">History</button>
+    </div>
+
+    <!-- SUPPLIERS -->
+    <section id="suppliers" class="panel tab-content active">
+        <h2>Supplier List</h2>
+        <input id="supplierSearch" placeholder="Search shop name..." oninput="renderSuppliers()">
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Shop Name</th>
+                        <th>Owner Name</th>
+                        <th>Mobile</th>
+                        <th>Address</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="supplierTable"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- NEW SUPPLIER -->
+    <section id="newSupplier" class="panel tab-content">
+        <h2>New Supplier</h2>
+        <div class="grid">
+            <div>
+                <label>Shop Name</label>
+                <input id="newShopName">
+            </div>
+            <div>
+                <label>Owner Name</label>
+                <input id="newOwnerName">
+            </div>
+            <div>
+                <label>Mobile Number</label>
+                <input id="newMobile">
+            </div>
+            <div>
+                <label>Address</label>
+                <input id="newAddress">
+            </div>
+        </div>
+        <div class="actions">
+            <button class="gold-btn" onclick="saveSupplier()">Save Supplier</button>
+            <button class="light-btn" onclick="clearSupplierForm()">Clear</button>
+        </div>
+    </section>
+
+    <!-- PURCHASE -->
+    <section id="purchase" class="panel tab-content">
+        <h2>New Purchase</h2>
+        <div class="grid">
+            <div>
+                <label>Shop Name</label>
+                <select id="purchaseSupplier"></select>
+            </div>
+            <div>
+                <label>Bill Number</label>
+                <div style="display:flex;gap:7px">
+                    <input id="purchaseNo">
+                    <button class="dark-btn" onclick="autoPurchaseNo()">AUTO</button>
+                </div>
+            </div>
+            <div>
+                <label>Purchase Date</label>
+                <input id="purchaseDate" type="date">
+            </div>
+            <div>
+                <label>Owner Name</label>
+                <input id="purchaseOwner" readonly>
+            </div>
+        </div>
+
+        <h3>Items</h3>
+        <div id="purchaseItems"></div>
+
+        <div class="actions">
+            <button class="light-btn" onclick="addPurchaseItem()">+ Add Item</button>
+        </div>
+
+        <div class="total-box">
+            Total Amount: <span id="purchaseTotal">₹0.00</span>
+        </div>
+
+        <div class="grid" style="margin-top:15px">
+            <div>
+                <label>Paid Amount</label>
+                <input id="purchasePaid" type="number" min="0" value="0" oninput="calculatePurchase()">
+            </div>
+            <div>
+                <label>Payment Mode</label>
+                <select id="purchaseMode">
+                    <option>CASH</option>
+                    <option>UPI</option>
+                    <option>BANK</option>
+                    <option>CARD</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="gold-btn" onclick="savePurchase()">Save Purchase</button>
+        </div>
+    </section>
+
+    <!-- PAYMENT -->
+    <section id="payment" class="panel tab-content">
+        <h2>Supplier Payment</h2>
+
+        <label>Search Supplier</label>
+        <input id="paymentSearch" placeholder="Type to filter suppliers..." oninput="renderPaymentSuppliers()">
+
+        <div class="small" style="margin-top:12px">Select Supplier</div>
+        <div id="paymentSuppliers" class="supplier-list"></div>
+
+        <div id="paymentBillsBox" class="hidden">
+            <h3>Related Bills</h3>
+            <div id="paymentBills" class="bill-list"></div>
+        </div>
+
+        <div id="paymentFormBox" class="hidden" style="margin-top:18px">
+            <h3>Payment Details</h3>
+            <div class="grid">
+                <div>
+                    <label>Shop Name</label>
+                    <input id="payShop" readonly>
+                </div>
+                <div>
+                    <label>Bill Number</label>
+                    <input id="payBill" readonly>
+                </div>
+                <div>
+                    <label>Purchase Date</label>
+                    <input id="payPurchaseDate" readonly>
+                </div>
+                <div>
+                    <label>Total Amount</label>
+                    <input id="payTotal" readonly>
+                </div>
+                <div>
+                    <label>Already Paid</label>
+                    <input id="payAlready" readonly>
+                </div>
+                <div>
+                    <label>Payment Date</label>
+                    <input id="paymentDate" type="date">
+                </div>
+                <div>
+                    <label>Payment Amount</label>
+                    <input id="paymentAmount" type="number" min="0">
+                </div>
+                <div>
+                    <label>Payment Mode</label>
+                    <select id="paymentMode">
+                        <option>CASH</option>
+                        <option>UPI</option>
+                        <option>BANK</option>
+                        <option>CARD</option>
+                    </select>
+                </div>
+                <div class="full">
+                    <label>Notes</label>
+                    <textarea id="paymentNotes"></textarea>
+                </div>
+            </div>
+            <div class="actions">
+                <button class="gold-btn" onclick="savePayment()">Save Payment</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- REPORT -->
+    <section id="report" class="panel tab-content">
+        <h2>Supplier Report</h2>
+        <div class="grid">
+            <div class="full">
+                <label>Search Supplier</label>
+                <input id="reportSupplierSearch" placeholder="Search supplier/shop name..." oninput="renderReportSuppliers()">
+            </div>
+        </div>
+        <div class="small" style="margin-top:14px">Supplier List — click supplier name to view all related bills</div>
+        <div id="reportSuppliers" class="supplier-list"></div>
+
+        <div id="reportBillsBox" class="hidden" style="margin-top:18px">
+            <h3 id="reportSelectedSupplierTitle">Related Bills</h3>
+            <div class="grid no-print">
+                <div>
+                    <label>Bill Number Search</label>
+                    <input id="reportSearch" placeholder="Search bill number..." oninput="renderSelectedSupplierBills()">
+                </div>
+                <div>
+                    <label>From Date</label>
+                    <input id="reportFrom" type="date" onchange="renderSelectedSupplierBills()">
+                </div>
+                <div>
+                    <label>To Date</label>
+                    <input id="reportTo" type="date" onchange="renderSelectedSupplierBills()">
+                </div>
+            </div>
+            <div class="actions no-print">
+                <button class="light-btn" onclick="window.print()">Print</button>
+                <button class="gold-btn" onclick="downloadSupplierReportPDF()">Download PDF</button>
+            </div>
+            <div id="reportSummary" class="report-summary"></div>
+            <div class="table-wrap report-table-wrap">
+                <table class="report-ledger-table">
+                    <thead><tr>
+                        <th>Date</th><th>Bill No.</th><th>Transaction</th>
+                        <th>Purchase</th><th>Payment</th><th>Balance</th>
+                    </tr></thead>
+                    <tbody id="reportTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- RETURN -->
+    <section id="return" class="panel tab-content">
+        <h2>Supplier Return</h2>
+        <div class="grid">
+            <div>
+                <label>Supplier</label>
+                <select id="returnSupplier"></select>
+            </div>
+            <div>
+                <label>Return Date</label>
+                <input id="returnDate" type="date">
+            </div>
+            <div>
+                <label>Item</label>
+                <input id="returnItem">
+            </div>
+            <div>
+                <label>Amount</label>
+                <input id="returnAmount" type="number" min="0">
+            </div>
+            <div class="full">
+                <label>Notes</label>
+                <textarea id="returnNotes"></textarea>
+            </div>
+        </div>
+        <div class="actions">
+            <button class="gold-btn" onclick="saveReturn()">Save Return</button>
+        </div>
+    </section>
+
+    <!-- HISTORY -->
+    <section id="history" class="panel tab-content">
+        <h2>Purchase History</h2>
+        <input id="historySearch" placeholder="Search bill or shop..." oninput="renderHistory()">
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bill Number</th>
+                        <th>Date</th>
+                        <th>Shop Name</th>
+                        <th>Total</th>
+                        <th>Paid</th>
+                        <th>Balance</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTable"></tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+const SUPABASE_URL = "https://tetihwttelthoyeidwhl.supabase.co";
+const SUPABASE_KEY = "sb_publishable_RoeCtLr9AhiOqKJq_zMXOA_txz_hOy7";
+
+let db = null;
+let suppliers = [];
+let purchases = [];
+let selectedPaymentSupplier = null;
+let selectedPaymentPurchase = null;
+
+function money(v){
+    return "₹" + Number(v || 0).toLocaleString("en-IN",{minimumFractionDigits:2});
+}
+
+function today(){
+    return new Date().toISOString().slice(0,10);
+}
+
+function notify(msg){
+    alert(msg);
+}
+
+function openTab(id,btn){
+    document.querySelectorAll(".tab-content").forEach(x=>x.classList.remove("active"));
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+    btn.classList.add("active");
+
+    if(id==="payment") renderPaymentSuppliers();
+    if(id==="report"){renderReportSuppliers();document.getElementById("reportBillsBox").classList.add("hidden");}
+    if(id==="history") renderHistory();
+}
+
+function goDashboard(){
+    location.href="dashboard.html";
+}
+
+async function logout(){
+    if(db) await db.auth.signOut();
+    location.href="owner-login.html";
+}
+
+async function init(){
+    try{
+        db = window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+        const {data:{session}} = await db.auth.getSession();
+        if(!session){
+            location.href="owner-login.html";
+            return;
+        }
+
+        document.getElementById("purchaseDate").value=today();
+        document.getElementById("paymentDate").value=today();
+        document.getElementById("returnDate").value=today();
+
+        await loadSuppliers();
+        await loadPurchases();
+        await loadStats();
+        renderReportSuppliers();
+
+        addPurchaseItem();
+        renderPaymentSuppliers();
+        renderHistory();
+
+    }catch(err){
+        console.error(err);
+        notify("Supplier Account could not load.\n"+err.message);
+    }
+}
+
+async function loadSuppliers(){
+    const {data,error}=await db
+        .from("suppliers")
+        .select("*")
+        .order("shop_name",{ascending:true});
+
+    if(error){
+        console.error(error);
+        suppliers=[];
+        return;
+    }
+
+    suppliers=data||[];
+    renderSuppliers();
+    fillSupplierSelects();
+    renderReportSuppliers();
+}
+
+function renderSuppliers(){
+    const q=(document.getElementById("supplierSearch").value||"").toLowerCase();
+
+    const rows=suppliers.filter(s=>
+        String(s.shop_name||s.supplier_name||"").toLowerCase().includes(q)
+    );
+
+    document.getElementById("supplierTable").innerHTML=rows.map(s=>`
+        <tr>
+            <td>${esc(s.shop_name||s.supplier_name||"")}</td>
+            <td>${esc(s.owner_name||"")}</td>
+            <td>${esc(s.mobile||"")}</td>
+            <td>${esc(s.address||"")}</td>
+            <td>
+                <button class="danger-btn" onclick="deleteSupplier(${s.id})">Delete</button>
+            </td>
+        </tr>
+    `).join("");
+}
+
+function esc(v){
+    return String(v??"")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;");
+}
+
+function fillSupplierSelects(){
+    const options='<option value="">Select Supplier</option>'+
+        suppliers.map(s=>`<option value="${s.id}">${esc(s.shop_name||s.supplier_name||"")}</option>`).join("");
+
+    ["purchaseSupplier","reportSupplier","returnSupplier"].forEach(id=>{
+        const el=document.getElementById(id);
+        if(el) el.innerHTML=options;
+    });
+}
+
+function clearSupplierForm(){
+    ["newShopName","newOwnerName","newMobile","newAddress"].forEach(id=>{
+        document.getElementById(id).value="";
+    });
+}
+
+async function saveSupplier(){
+    const shop=document.getElementById("newShopName").value.trim();
+    const owner=document.getElementById("newOwnerName").value.trim();
+    const mobile=document.getElementById("newMobile").value.trim();
+    const address=document.getElementById("newAddress").value.trim();
+
+    if(!shop){
+        notify("Shop Name is required.");
+        return;
+    }
+
+    const {error}=await db.from("suppliers").insert({
+        shop_name:shop,
+        supplier_name:shop,
+        owner_name:owner,
+        mobile,
+        address
+    });
+
+    if(error){
+        notify(error.message);
+        return;
+    }
+
+    notify("Supplier saved successfully.");
+    clearSupplierForm();
+    await loadSuppliers();
+}
+
+async function deleteSupplier(id){
+    if(!confirm("Delete this supplier?")) return;
+
+    const {error}=await db.from("suppliers").delete().eq("id",id);
+
+    if(error){
+        notify(error.message);
+        return;
+    }
+
+    await loadSuppliers();
+}
+
+function addPurchaseItem(){
+    const box=document.getElementById("purchaseItems");
+
+    const row=document.createElement("div");
+    row.className="item-row";
+    row.innerHTML=`
+        <input class="pItem" placeholder="Item name">
+        <input class="pAmount" type="number" min="0" placeholder="Total Amount" oninput="calculatePurchase()">
+        <button class="danger-btn" onclick="this.parentElement.remove();calculatePurchase()">X</button>
+    `;
+
+    box.appendChild(row);
+}
+
+function calculatePurchase(){
+    let total=0;
+    document.querySelectorAll(".pAmount").forEach(x=>{
+        total+=Number(x.value||0);
+    });
+
+    document.getElementById("purchaseTotal").textContent=money(total);
+    return total;
+}
+
+function selectedSupplier(id){
+    return suppliers.find(s=>String(s.id)===String(id));
+}
+
+document.getElementById("purchaseSupplier").addEventListener("change",function(){
+    const s=selectedSupplier(this.value);
+    document.getElementById("purchaseOwner").value=s?s.owner_name||"":"";
+});
+
+async function autoPurchaseNo(){
+    const {data,error}=await db
+        .from("purchases")
+        .select("purchase_no,id")
+        .order("id",{ascending:false})
+        .limit(1);
+
+    if(error){
+        notify(error.message);
+        return;
+    }
+
+    let n=1;
+
+    if(data&&data.length){
+        const m=String(data[0].purchase_no||"").match(/PUR-(\d+)/i);
+        if(m) n=Number(m[1])+1;
+    }
+
+    document.getElementById("purchaseNo").value="PUR-"+String(n).padStart(3,"0");
+}
+
+async function savePurchase(){
+    const supplierId=document.getElementById("purchaseSupplier").value;
+    const supplier=selectedSupplier(supplierId);
+    const purchaseNo=document.getElementById("purchaseNo").value.trim();
+
+    if(!supplier){
+        notify("Please select supplier.");
+        return;
+    }
+
+    if(!purchaseNo){
+        notify("Enter Bill Number or press AUTO.");
+        return;
+    }
+
+    const rows=[...document.querySelectorAll(".item-row")].map(r=>({
+        item:r.querySelector(".pItem").value.trim(),
+        amount:Number(r.querySelector(".pAmount").value||0)
+    })).filter(x=>x.item && x.amount>0);
+
+    if(!rows.length){
+        notify("Add at least one item.");
+        return;
+    }
+
+    const total=rows.reduce((a,b)=>a+b.amount,0);
+    const paid=Number(document.getElementById("purchasePaid").value||0);
+
+    if(paid>total){
+        notify("Paid amount cannot be greater than total.");
+        return;
+    }
+
+    const pending=total-paid;
+
+    const {data:purchase,error}=await db.from("purchases").insert({
+        purchase_no:purchaseNo,
+        supplier_name:supplier.shop_name||supplier.supplier_name,
+        shop_name:supplier.shop_name,
+        owner_name:supplier.owner_name||"",
+        purchase_date:document.getElementById("purchaseDate").value||today(),
+        total_amount:total,
+        paid_amount:paid,
+        pending_amount:pending,
+        status:pending<=0?"PAID":"PENDING"
+    }).select().single();
+
+    if(error){
+        notify(error.message);
+        return;
+    }
+
+    const items=rows.map(x=>({
+        purchase_id:purchase.id,
+        item_name:x.item,
+        category_name:null,
+        size:null,
+        color:null,
+        quantity:1,
+        rate:x.amount
+    }));
+
+    const itemResult=await db.from("purchase_items").insert(items);
+
+    if(itemResult.error){
+        notify(itemResult.error.message);
+        return;
+    }
+
+    if(paid>0){
+        const paymentResult=await db.from("purchase_payments").insert({
+            purchase_id:purchase.id,
+            payment_date:document.getElementById("purchaseDate").value||today(),
+            payment_amount:paid,
+            payment_mode:document.getElementById("purchaseMode").value,
+            notes:"Initial purchase payment"
+        });
+
+        if(paymentResult.error){
+            notify(paymentResult.error.message);
+            return;
+        }
+    }
+
+    notify("Purchase saved successfully.");
+
+    document.getElementById("purchaseNo").value="";
+    document.getElementById("purchasePaid").value="0";
+    document.getElementById("purchaseItems").innerHTML="";
+    addPurchaseItem();
+    calculatePurchase();
+
+    await loadPurchases();
+    await loadStats();
+    await loadReportsSelectors();
+    renderHistory();
+}
+
+async function loadPurchases(){
+    const {data,error}=await db
+        .from("purchases")
+        .select("*")
+        .order("id",{ascending:false});
+
+    if(error){
+        console.error(error);
+        purchases=[];
+        return;
+    }
+
+    purchases=data||[];
+}
+
+async function loadStats(){
+    const total=purchases.reduce((a,p)=>a+Number(p.total_amount||0),0);
+    const paid=purchases.reduce((a,p)=>a+Number(p.paid_amount||0),0);
+
+    document.getElementById("statPurchase").textContent=money(total);
+    document.getElementById("statPaid").textContent=money(paid);
+}
+
+function renderPaymentSuppliers(){
+    const q=(document.getElementById("paymentSearch").value||"").toLowerCase();
+
+    const list=suppliers.filter(s=>
+        String(s.shop_name||s.supplier_name||"").toLowerCase().includes(q)
+    );
+
+    document.getElementById("paymentSuppliers").innerHTML=list.map(s=>`
+        <div class="select-card" onclick="selectPaymentSupplier(${s.id})">
+            <b>${esc(s.shop_name||s.supplier_name||"")}</b>
+            <div class="small">${esc(s.owner_name||"")} ${s.mobile?"• "+esc(s.mobile):""}</div>
+        </div>
+    `).join("") || `<div class="notice">No supplier found.</div>`;
+}
+
+function selectPaymentSupplier(id){
+    selectedPaymentSupplier=selectedSupplier(id);
+
+    const bills=purchases.filter(p=>
+        String(p.supplier_name||"").toLowerCase()===
+        String(selectedPaymentSupplier.shop_name||selectedPaymentSupplier.supplier_name||"").toLowerCase()
+    );
+
+    document.getElementById("paymentBillsBox").classList.remove("hidden");
+
+    document.getElementById("paymentBills").innerHTML=bills.map(p=>`
+        <div class="select-card" onclick="selectPaymentBill(${p.id})">
+            <b>${esc(p.purchase_no)}</b>
+            <div class="small">${esc(p.purchase_date||"")} • ${money(p.total_amount)} • Paid ${money(p.paid_amount)}</div>
+        </div>
+    `).join("") || `<div class="notice">No bills found for this supplier.</div>`;
+
+    document.getElementById("paymentFormBox").classList.add("hidden");
+}
+
+function selectPaymentBill(id){
+    selectedPaymentPurchase=purchases.find(p=>String(p.id)===String(id));
+    if(!selectedPaymentPurchase) return;
+
+    const p=selectedPaymentPurchase;
+
+    document.getElementById("payShop").value=p.shop_name||p.supplier_name||"";
+    document.getElementById("payBill").value=p.purchase_no||"";
+    document.getElementById("payPurchaseDate").value=p.purchase_date||"";
+    document.getElementById("payTotal").value=money(p.total_amount);
+    document.getElementById("payAlready").value=money(p.paid_amount);
+    document.getElementById("paymentDate").value=today();
+    document.getElementById("paymentAmount").value="";
+    document.getElementById("paymentNotes").value="";
+
+    document.getElementById("paymentFormBox").classList.remove("hidden");
+}
+
+async function savePayment(){
+    if(!selectedPaymentPurchase){
+        notify("Select a bill first.");
+        return;
+    }
+
+    const amount=Number(document.getElementById("paymentAmount").value||0);
+    const currentPaid=Number(selectedPaymentPurchase.paid_amount||0);
+    const total=Number(selectedPaymentPurchase.total_amount||0);
+
+    if(amount<=0){
+        notify("Enter payment amount.");
+        return;
+    }
+
+    if(currentPaid+amount>total){
+        notify("Payment cannot exceed bill amount.");
+        return;
+    }
+
+    const result=await db.from("purchase_payments").insert({
+        purchase_id:selectedPaymentPurchase.id,
+        payment_date:document.getElementById("paymentDate").value||today(),
+        payment_amount:amount,
+        payment_mode:document.getElementById("paymentMode").value,
+        notes:document.getElementById("paymentNotes").value.trim()
+    });
+
+    if(result.error){
+        notify(result.error.message);
+        return;
+    }
+
+    const newPaid=currentPaid+amount;
+    const newBalance=total-newPaid;
+
+    const update=await db.from("purchases").update({
+        paid_amount:newPaid,
+        pending_amount:newBalance,
+        status:newBalance<=0?"PAID":"PENDING"
+    }).eq("id",selectedPaymentPurchase.id);
+
+    if(update.error){
+        notify(update.error.message);
+        return;
+    }
+
+    notify("Payment saved successfully.");
+
+    await loadPurchases();
+    await loadStats();
+    selectPaymentSupplier(selectedPaymentSupplier.id);
+    renderHistory();
+}
+
+function renderReportSuppliers(){
+    const q=(document.getElementById("reportSupplierSearch").value||"").toLowerCase().trim();
+    const list=suppliers.filter(s=>String(s.shop_name||s.supplier_name||"").toLowerCase().includes(q));
+    document.getElementById("reportSuppliers").innerHTML=list.map(s=>`
+        <div class="select-card" onclick="selectReportSupplier(${s.id})">
+            <b>${esc(s.shop_name||s.supplier_name||"")}</b>
+            <div class="small">${esc(s.owner_name||"")} ${s.mobile?" • "+esc(s.mobile):""}</div>
+        </div>`).join("") || `<div class="notice">No supplier found.</div>`;
+}
+
+function selectReportSupplier(id){
+    const supplier=selectedSupplier(id);
+    if(!supplier)return;
+    document.getElementById("reportBillsBox").classList.remove("hidden");
+    document.getElementById("reportSelectedSupplierTitle").textContent="Supplier: "+(supplier.shop_name||supplier.supplier_name||"Supplier")+" — Related Bills";
+    document.getElementById("reportSearch").value="";
+    document.getElementById("reportFrom").value="";
+    document.getElementById("reportTo").value="";
+    renderSelectedSupplierBills(id);
+}
+
+async function renderSelectedSupplierBills(supplierId){
+    let supplier=supplierId?selectedSupplier(supplierId):null;
+    if(!supplier){
+        const name=document.getElementById("reportSelectedSupplierTitle").textContent.replace(/^Supplier:\s*/i,"").replace(" — Related Bills","").trim().toLowerCase();
+        supplier=suppliers.find(s=>String(s.shop_name||s.supplier_name||"").toLowerCase()===name);
+    }
+    if(!supplier)return;
+
+    const q=(document.getElementById("reportSearch").value||"").toLowerCase().trim();
+    const from=document.getElementById("reportFrom").value;
+    const to=document.getElementById("reportTo").value;
+    const supplierName=String(supplier.shop_name||supplier.supplier_name||"").toLowerCase();
+
+    let bills=purchases.filter(p=>String(p.shop_name||p.supplier_name||"").toLowerCase()===supplierName);
+    if(q) bills=bills.filter(p=>String(p.purchase_no||"").toLowerCase().includes(q));
+    if(from) bills=bills.filter(p=>String(p.purchase_date||"")>=from);
+    if(to) bills=bills.filter(p=>String(p.purchase_date||"")<=to);
+
+    const billIds=bills.map(p=>p.id);
+    let payments=[];
+    if(billIds.length){
+        const result=await db.from("purchase_payments").select("*").in("purchase_id",billIds).order("payment_date",{ascending:true});
+        if(result.error){ notify(result.error.message); return; }
+        payments=result.data||[];
+    }
+
+    let html="";
+    let totalPurchase=0,totalPayment=0,totalBalance=0;
+    const pdfRows=[];
+
+    bills.forEach(p=>{
+        const total=Number(p.total_amount||0);
+        const billPayments=payments.filter(x=>String(x.purchase_id)===String(p.id));
+        let running=total;
+        totalPurchase+=total;
+
+        // 1) Goods purchase = one line
+        html+=`<tr>
+            <td>${esc(p.purchase_date||"")}</td>
+            <td><b>${esc(p.purchase_no||"")}</b></td>
+            <td class="ledger-purchase">Goods Purchase</td>
+            <td>${money(total)}</td>
+            <td>-</td>
+            <td>${money(running)}</td>
+        </tr>`;
+        pdfRows.push([p.purchase_date||"",p.purchase_no||"","Goods Purchase",pdfMoney(total),"-",pdfMoney(running)]);
+
+        // 2) Every payment = separate line
+        billPayments.forEach(pay=>{
+            const amount=Number(pay.payment_amount||0);
+            running=Math.max(running-amount,0);
+            totalPayment+=amount;
+            const mode=String(pay.payment_mode||"").trim();
+            const transaction=mode ? `Payment — ${mode}` : "Payment";
+
+            html+=`<tr>
+                <td>${esc(String(pay.payment_date||"").slice(0,10))}</td>
+                <td><b>${esc(p.purchase_no||"")}</b></td>
+                <td class="ledger-payment">${esc(transaction)}</td>
+                <td>-</td>
+                <td>${money(amount)}</td>
+                <td>${money(running)}</td>
+            </tr>`;
+            pdfRows.push([String(pay.payment_date||"").slice(0,10),p.purchase_no||"",transaction,"-",pdfMoney(amount),pdfMoney(running)]);
+        });
+
+        totalBalance+=running;
+    });
+
+    if(!bills.length){
+        html='<tr><td colspan="6" style="text-align:center;padding:28px;color:#777">No transaction found for this supplier.</td></tr>';
+    }
+
+    document.getElementById("reportTable").innerHTML=html;
+    document.getElementById("reportSummary").innerHTML=`
+        <div class="summary-item"><div class="summary-label">Supplier</div><div class="summary-value">${esc(supplier.shop_name||supplier.supplier_name||"")}</div></div>
+        <div class="summary-item"><div class="summary-label">Total Purchase</div><div class="summary-value">${money(totalPurchase)}</div></div>
+        <div class="summary-item"><div class="summary-label">Total Payments</div><div class="summary-value">${money(totalPayment)}</div></div>
+        <div class="summary-item"><div class="summary-label">Closing Balance</div><div class="summary-value">${money(totalBalance)}</div></div>`;
+
+    window.currentSupplierReport={supplier,pdfRows,totalPurchase,totalPayment,totalBalance,from,to};
+}
+
+function pdfMoney(v){
+    return Number(v||0).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+async function downloadSupplierReportPDF(){
+    if(!window.currentSupplierReport){ notify("Please select a supplier first."); return; }
+
+    const {supplier,pdfRows,totalPurchase,totalPayment,totalBalance,from,to}=window.currentSupplierReport;
+    const jsPDF=window.jspdf&&window.jspdf.jsPDF;
+    if(!jsPDF){ notify("PDF library could not load. Please check internet connection and try again."); return; }
+
+    const doc=new jsPDF("l","mm","a4");
+    const supplierName=supplier.shop_name||supplier.supplier_name||"Supplier";
+    const pageW=doc.internal.pageSize.getWidth();
+
+    // Header
+    doc.setFillColor(24,24,24);
+    doc.rect(0,0,pageW,27,"F");
+    doc.setTextColor(255,255,255);
+    doc.setFont("helvetica","bold");
+    doc.setFontSize(19);
+    doc.text("BOMBAY NX",14,11);
+    doc.setFont("helvetica","normal");
+    doc.setFontSize(9);
+    doc.setTextColor(220,220,220);
+    doc.text("Supplier Account Ledger",14,18);
+    doc.text("Transaction Report",14,23);
+
+    // Supplier information — always show supplier name prominently
+    doc.setFillColor(250,247,240);
+    doc.setDrawColor(222,214,201);
+    doc.roundedRect(14,32,pageW-28,17,2,2,"FD");
+    doc.setTextColor(105,98,88);
+    doc.setFont("helvetica","bold");
+    doc.setFontSize(8);
+    doc.text("SUPPLIER",20,38);
+    doc.setTextColor(28,28,28);
+    doc.setFont("helvetica","bold");
+    doc.setFontSize(14);
+    doc.text(String(supplierName || "Supplier"),20,45);
+
+    doc.setFont("helvetica","normal");
+    doc.setFontSize(8);
+    doc.setTextColor(105,98,88);
+    const rangeText=(from||to)?`Period: ${from||"Beginning"}  to  ${to||"Present"}`:"Period: All Transactions";
+    doc.text(rangeText,pageW-20,38,{align:"right"});
+    doc.text(`Generated: ${new Date().toLocaleDateString("en-IN")}`,pageW-20,45,{align:"right"});
+
+    // Summary strip
+    const boxes=[
+        ["TOTAL PURCHASE",pdfMoney(totalPurchase)],
+        ["TOTAL PAYMENTS",pdfMoney(totalPayment)],
+        ["CLOSING BALANCE",pdfMoney(totalBalance)]
+    ];
+    const bw=(pageW-28-20)/3;
+    boxes.forEach((b,i)=>{
+        const x=14+i*(bw+10);
+        doc.setFillColor(248,245,238);
+        doc.setDrawColor(225,218,205);
+        doc.roundedRect(x,53,bw,16,2,2,"FD");
+        doc.setFont("helvetica","normal");
+        doc.setFontSize(7);
+        doc.setTextColor(105,98,88);
+        doc.text(b[0],x+6,59);
+        doc.setFont("helvetica","bold");
+        doc.setFontSize(11);
+        doc.setTextColor(30,30,30);
+        doc.text(b[1],x+6,65.5);
+    });
+
+    // Ledger table
+    doc.autoTable({
+        startY:77,
+        head:[["DATE","BILL NO.","TRANSACTION","PURCHASE","PAYMENT","BALANCE"]],
+        body:pdfRows,
+        theme:"grid",
+        margin:{left:14,right:14},
+        styles:{
+            font:"helvetica",
+            fontSize:8.5,
+            cellPadding:{top:3,bottom:3,left:4,right:4},
+            textColor:[45,45,45],
+            lineColor:[225,225,225],
+            lineWidth:0.2,
+            valign:"middle"
+        },
+        headStyles:{
+            fillColor:[38,38,38],
+            textColor:[255,255,255],
+            fontStyle:"bold",
+            fontSize:8.5,
+            halign:"center"
+        },
+        alternateRowStyles:{fillColor:[252,250,246]},
+        columnStyles:{
+            0:{cellWidth:32},
+            1:{cellWidth:32},
+            2:{cellWidth:78},
+            3:{cellWidth:38,halign:"right"},
+            4:{cellWidth:38,halign:"right"},
+            5:{cellWidth:38,halign:"right"}
+        },
+        didDrawPage:function(data){
+            const h=doc.internal.pageSize.getHeight();
+            doc.setDrawColor(215,208,196);
+            doc.line(14,h-13,pageW-14,h-13);
+            doc.setFont("helvetica","normal");
+            doc.setFontSize(7);
+            doc.setTextColor(110,110,110);
+            doc.text("BOMBAY NX • Supplier Account Ledger",14,h-7);
+            doc.text(`Page ${doc.internal.getNumberOfPages()}`,pageW-14,h-7,{align:"right"});
+        }
+    });
+
+    const safeName=supplierName.replace(/[^a-z0-9]+/gi,"-").replace(/^-|-$/g,"")||"supplier";
+    doc.save(`BOMBAY-NX-${safeName}-Supplier-Ledger.pdf`);
+}
+
+function loadReport(){renderReportSuppliers();}
+
+function renderHistory(){
+    const q=(document.getElementById("historySearch").value||"").toLowerCase();
+
+    const rows=purchases.filter(p=>
+        String(p.purchase_no||"").toLowerCase().includes(q) ||
+        String(p.shop_name||p.supplier_name||"").toLowerCase().includes(q)
+    );
+
+    document.getElementById("historyTable").innerHTML=rows.map(p=>`
+        <tr>
+            <td>${esc(p.purchase_no)}</td>
+            <td>${esc(p.purchase_date||"")}</td>
+            <td>${esc(p.shop_name||p.supplier_name||"")}</td>
+            <td>${money(p.total_amount)}</td>
+            <td>${money(p.paid_amount)}</td>
+            <td>${money(Number(p.total_amount||0)-Number(p.paid_amount||0))}</td>
+        </tr>
+    `).join("");
+}
+
+async function saveReturn(){
+    const supplierId=document.getElementById("returnSupplier").value;
+    const supplier=selectedSupplier(supplierId);
+    const item=document.getElementById("returnItem").value.trim();
+    const amount=Number(document.getElementById("returnAmount").value||0);
+
+    if(!supplier||!item||amount<=0){
+        notify("Supplier, Item and Amount are required.");
+        return;
+    }
+
+    const result=await db.from("supplier_returns").insert({
+        supplier_id:supplier.id,
+        supplier_name:supplier.shop_name||supplier.supplier_name,
+        return_date:document.getElementById("returnDate").value||today(),
+        category_name:null,
+        item_name:item,
+        quantity:1,
+        purchase_rate:amount,
+        status:"ADJUSTED"
+    });
+
+    if(result.error){
+        notify(result.error.message);
+        return;
+    }
+
+    notify("Supplier return saved.");
+    document.getElementById("returnItem").value="";
+    document.getElementById("returnAmount").value="";
+    document.getElementById("returnNotes").value="";
+}
+
+window.addEventListener("load",init);
+</script>
+
+</body>
+</html>

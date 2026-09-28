@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>BOMBAY NX | Owner Login</title>
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    min-height:100vh;
+    background:#f3efe7;
+    color:#111;
+}
+
+.page{
+    min-height:100vh;
+    display:flex;
+}
+
+/* LEFT */
+
+.brand-side{
+    width:45%;
+    background:#111;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:50px;
+}
+
+.brand-content{
+    width:100%;
+    max-width:500px;
+}
+
+.logo{
+    width:80px;
+    height:80px;
+    border:2px solid #c9a45c;
+    color:#c9a45c;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:25px;
+    font-weight:bold;
+    letter-spacing:2px;
+    margin-bottom:35px;
+}
+
+.brand-content h1{
+    font-size:46px;
+    letter-spacing:5px;
+}
+
+.brand-content h3{
+    color:#c9a45c;
+    letter-spacing:5px;
+    font-size:15px;
+    margin-top:8px;
+}
+
+.brand-content p{
+    color:#aaa;
+    line-height:1.7;
+    margin-top:35px;
+    font-size:15px;
+}
+
+.features{
+    display:flex;
+    gap:30px;
+    margin-top:50px;
+}
+
+.feature strong{
+    display:block;
+    color:#c9a45c;
+    font-size:13px;
+}
+
+.feature span{
+    color:#aaa;
+    font-size:12px;
+}
+
+/* RIGHT */
+
+.login-side{
+    width:55%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:30px;
+}
+
+.card{
+    width:100%;
+    max-width:470px;
+    background:#fff;
+    padding:45px;
+    box-shadow:0 15px 50px rgba(0,0,0,.08);
+}
+
+.heading small{
+    color:#b08a45;
+    font-weight:bold;
+    letter-spacing:2px;
+}
+
+.heading h2{
+    margin-top:10px;
+    font-size:32px;
+}
+
+.heading p{
+    margin-top:8px;
+    color:#777;
+    font-size:14px;
+}
+
+form{
+    margin-top:30px;
+}
+
+.group{
+    margin-bottom:20px;
+}
+
+label{
+    display:block;
+    font-size:11px;
+    font-weight:bold;
+    letter-spacing:1px;
+    margin-bottom:8px;
+}
+
+input{
+    width:100%;
+    padding:14px;
+    border:1px solid #ddd;
+    outline:none;
+    font-size:14px;
+}
+
+input:focus{
+    border-color:#b08a45;
+}
+
+.password{
+    position:relative;
+}
+
+.password input{
+    padding-right:65px;
+}
+
+.show-btn{
+    position:absolute;
+    right:10px;
+    top:50%;
+    transform:translateY(-50%);
+    border:0;
+    background:none;
+    font-size:10px;
+    font-weight:bold;
+    cursor:pointer;
+    color:#8b6a35;
+}
+
+.options{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:5px 0 22px;
+    font-size:12px;
+}
+
+.remember{
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.remember input{
+    width:auto;
+}
+
+.link-btn{
+    border:0;
+    background:none;
+    cursor:pointer;
+    color:#8b6a35;
+    font-size:12px;
+}
+
+.main-btn{
+    width:100%;
+    padding:15px;
+    background:#111;
+    color:#fff;
+    border:none;
+    cursor:pointer;
+    font-weight:bold;
+    letter-spacing:2px;
+}
+
+.main-btn:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+.bottom{
+    margin-top:25px;
+    text-align:center;
+    font-size:13px;
+    color:#777;
+}
+
+.bottom button{
+    border:0;
+    background:none;
+    color:#9b7538;
+    font-weight:bold;
+    cursor:pointer;
+    margin-left:5px;
+}
+
+.back{
+    margin-top:20px;
+    width:100%;
+    padding:12px;
+    background:transparent;
+    border:1px solid #ddd;
+    cursor:pointer;
+}
+
+.message{
+    margin-top:15px;
+    font-size:13px;
+    line-height:1.5;
+}
+
+.success{
+    color:#16834a;
+}
+
+.error{
+    color:#c62828;
+}
+
+.hidden{
+    display:none;
+}
+
+.footer{
+    margin-top:35px;
+    text-align:center;
+    color:#aaa;
+    font-size:10px;
+    letter-spacing:1px;
+}
+
+@media(max-width:800px){
+
+    .page{
+        display:block;
+    }
+
+    .brand-side,
+    .login-side{
+        width:100%;
+    }
+
+    .brand-side{
+        padding:35px 25px;
+    }
+
+    .brand-content h1{
+        font-size:32px;
+    }
+
+    .features{
+        margin-top:30px;
+    }
+
+    .login-side{
+        padding:25px 15px;
+    }
+
+    .card{
+        padding:30px 22px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="page">
+
+
+    <!-- BRAND SIDE -->
+
+    <div class="brand-side">
+
+        <div class="brand-content">
+
+            <div class="logo">
+                BNX
+            </div>
+
+            <h1>BOMBAY NX</h1>
+
+            <h3>MENSWEAR</h3>
+
+            <p>
+                Premium shop management system for
+                stock, billing, customers and business reports.
+            </p>
+
+            <div class="features">
+
+                <div class="feature">
+                    <strong>STOCK</strong>
+                    <span>Management</span>
+                </div>
+
+                <div class="feature">
+                    <strong>BILLING</strong>
+                    <span>Invoices</span>
+                </div>
+
+                <div class="feature">
+                    <strong>REPORTS</strong>
+                    <span>Business</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- LOGIN SIDE -->
+
+    <div class="login-side">
+
+        <div class="card">
+
+
+            <!-- LOGIN -->
+
+            <div id="loginBox">
+
+                <div class="heading">
+
+                    <small>OWNER ACCESS</small>
+
+                    <h2>Welcome Back</h2>
+
+                    <p>
+                        Login to continue to BOMBAY NX.
+                    </p>
+
+                </div>
+
+
+                <form id="loginForm">
+
+                    <div class="group">
+
+                        <label>EMAIL ID</label>
+
+                        <input
+                            type="email"
+                            id="loginEmail"
+                            placeholder="Enter email"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="group">
+
+                        <label>PASSWORD</label>
+
+                        <div class="password">
+
+                            <input
+                                type="password"
+                                id="loginPassword"
+                                placeholder="Enter password"
+                                autocomplete="current-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="show-btn"
+                                id="showLoginPassword"
+                            >
+                                SHOW
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="options">
+
+                        <label class="remember">
+
+                            <input
+                                type="checkbox"
+                                id="rememberMe"
+                            >
+
+                            Remember Me
+
+                        </label>
+
+
+                        <button
+                            type="button"
+                            class="link-btn"
+                            id="forgotBtn"
+                        >
+                            Forgot Password?
+                        </button>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="main-btn"
+                        id="loginBtn"
+                    >
+                        LOGIN
+                    </button>
+
+                </form>
+
+
+                <div
+                    id="loginMessage"
+                    class="message">
+                </div>
+
+
+                <div class="bottom">
+
+                    New Owner?
+
+                    <button
+                        type="button"
+                        id="signupOpen"
+                    >
+                        Create New Account
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- SIGNUP -->
+
+            <div
+                id="signupBox"
+                class="hidden"
+            >
+
+                <div class="heading">
+
+                    <small>OWNER REGISTRATION</small>
+
+                    <h2>Create Account</h2>
+
+                    <p>
+                        Maximum 2 owner accounts.
+                    </p>
+
+                </div>
+
+
+                <form id="signupForm">
+
+                    <div class="group">
+
+                        <label>OWNER NAME</label>
+
+                        <input
+                            type="text"
+                            id="ownerName"
+                            placeholder="Owner name"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="group">
+
+                        <label>MOBILE NUMBER</label>
+
+                        <input
+                            type="tel"
+                            id="ownerMobile"
+                            placeholder="Mobile number"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="group">
+
+                        <label>EMAIL ID</label>
+
+                        <input
+                            type="email"
+                            id="ownerEmail"
+                            placeholder="Email"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="group">
+
+                        <label>PASSWORD</label>
+
+                        <input
+                            type="password"
+                            id="ownerPassword"
+                            placeholder="Minimum 6 characters"
+                            minlength="6"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="group">
+
+                        <label>CONFIRM PASSWORD</label>
+
+                        <input
+                            type="password"
+                            id="ownerConfirmPassword"
+                            placeholder="Confirm password"
+                            minlength="6"
+                            required
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="main-btn"
+                        id="signupBtn"
+                    >
+                        CREATE ACCOUNT
+                    </button>
+
+                </form>
+
+
+                <div
+                    id="signupMessage"
+                    class="message">
+                </div>
+
+
+                <button
+                    type="button"
+                    class="back"
+                    id="backLogin"
+                >
+                    ← BACK TO LOGIN
+                </button>
+
+            </div>
+
+
+            <!-- FORGOT PASSWORD -->
+
+            <div
+                id="forgotBox"
+                class="hidden"
+            >
+
+                <div class="heading">
+
+                    <small>ACCOUNT RECOVERY</small>
+
+                    <h2>Forgot Password?</h2>
+
+                    <p>
+                        Enter your registered email.
+                    </p>
+
+                </div>
+
+
+                <form id="forgotForm">
+
+                    <div class="group">
+
+                        <label>EMAIL ID</label>
+
+                        <input
+                            type="email"
+                            id="forgotEmail"
+                            placeholder="Enter email"
+                            required
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="main-btn"
+                        id="forgotSendBtn"
+                    >
+                        SEND RESET LINK
+                    </button>
+
+                </form>
+
+
+                <div
+                    id="forgotMessage"
+                    class="message">
+                </div>
+
+
+                <button
+                    type="button"
+                    class="back"
+                    id="backForgot"
+                >
+                    ← BACK TO LOGIN
+                </button>
+
+            </div>
+
+
+            <div class="footer">
+                BOMBAY NX • PREMIUM MENSWEAR
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   SUPABASE CONNECTION
+========================================================= */
+
+const SUPABASE_URL =
+    "https://tetihwttelthoyeidwhl.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_RoeCtLr9AhiOqKJq_zMXOA_txz_hOy7";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const loginBox =
+    document.getElementById("loginBox");
+
+const signupBox =
+    document.getElementById("signupBox");
+
+const forgotBox =
+    document.getElementById("forgotBox");
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+function showMessage(elementId,message,type){
+
+    const element =
+        document.getElementById(elementId);
+
+    element.textContent = message;
+
+    element.className =
+        "message " + type;
+
+}
+
+
+function clearMessages(){
+
+    document.getElementById("loginMessage").textContent = "";
+    document.getElementById("signupMessage").textContent = "";
+    document.getElementById("forgotMessage").textContent = "";
+
+    document.getElementById("loginMessage").className = "message";
+    document.getElementById("signupMessage").className = "message";
+    document.getElementById("forgotMessage").className = "message";
+
+}
+
+
+/* =========================================================
+   SHOW LOGIN
+========================================================= */
+
+function showLoginBox(){
+
+    clearMessages();
+
+    loginBox.classList.remove("hidden");
+    signupBox.classList.add("hidden");
+    forgotBox.classList.add("hidden");
+
+}
+
+
+/* =========================================================
+   SHOW SIGNUP
+========================================================= */
+
+document
+.getElementById("signupOpen")
+.addEventListener("click",function(){
+
+    clearMessages();
+
+    loginBox.classList.add("hidden");
+    signupBox.classList.remove("hidden");
+    forgotBox.classList.add("hidden");
+
+});
+
+
+/* =========================================================
+   BACK LOGIN
+========================================================= */
+
+document
+.getElementById("backLogin")
+.addEventListener("click",function(){
+
+    showLoginBox();
+
+});
+
+
+/* =========================================================
+   FORGOT
+========================================================= */
+
+document
+.getElementById("forgotBtn")
+.addEventListener("click",function(){
+
+    clearMessages();
+
+    loginBox.classList.add("hidden");
+    signupBox.classList.add("hidden");
+    forgotBox.classList.remove("hidden");
+
+    const email =
+        document
+        .getElementById("loginEmail")
+        .value
+        .trim();
+
+    if(email){
+
+        document
+        .getElementById("forgotEmail")
+        .value = email;
+
+    }
+
+});
+
+
+/* =========================================================
+   BACK FROM FORGOT
+========================================================= */
+
+document
+.getElementById("backForgot")
+.addEventListener("click",function(){
+
+    showLoginBox();
+
+});
+
+
+/* =========================================================
+   SHOW / HIDE PASSWORD
+========================================================= */
+
+document
+.getElementById("showLoginPassword")
+.addEventListener("click",function(){
+
+    const input =
+        document.getElementById("loginPassword");
+
+    if(input.type === "password"){
+
+        input.type = "text";
+
+        this.textContent = "HIDE";
+
+    }else{
+
+        input.type = "password";
+
+        this.textContent = "SHOW";
+
+    }
+
+});
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+document
+.getElementById("loginForm")
+.addEventListener("submit",async function(event){
+
+    event.preventDefault();
+
+    clearMessages();
+
+    const button =
+        document.getElementById("loginBtn");
+
+    const email =
+        document
+        .getElementById("loginEmail")
+        .value
+        .trim()
+        .toLowerCase();
+
+    const password =
+        document
+        .getElementById("loginPassword")
+        .value;
+
+    const remember =
+        document
+        .getElementById("rememberMe")
+        .checked;
+
+
+    if(!email || !password){
+
+        showMessage(
+            "loginMessage",
+            "Please enter email and password.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    button.disabled = true;
+    button.textContent = "LOGINNING...";
+
+
+    try{
+
+        /* LOGIN AUTH */
+
+        const result =
+            await supabaseClient
+            .auth
+            .signInWithPassword({
+
+                email:email,
+
+                password:password
+
+            });
+
+
+        if(result.error){
+
+            throw result.error;
+
+        }
+
+
+        const user =
+            result.data.user;
+
+
+        if(!user){
+
+            throw new Error(
+                "Login failed."
+            );
+
+        }
+
+
+        /* REMEMBER EMAIL */
+
+        if(remember){
+
+            localStorage.setItem(
+                "bombay_nx_owner_email",
+                email
+            );
+
+        }else{
+
+            localStorage.removeItem(
+                "bombay_nx_owner_email"
+            );
+
+        }
+
+
+        /*
+         ================================================
+         CHECK OWNER PROFILE
+         ================================================
+        */
+
+        const profileResult =
+            await supabaseClient
+            .from("owner_profile")
+            .select("*")
+            .eq("id",user.id)
+            .maybeSingle();
+
+
+        if(profileResult.error){
+
+            throw profileResult.error;
+
+        }
+
+
+        /*
+         ================================================
+         PROFILE DOES NOT EXIST
+         CREATE IT AUTOMATICALLY
+         ================================================
+        */
+
+        if(!profileResult.data){
+
+            const metadata =
+                user.user_metadata || {};
+
+
+            const ownerName =
+                metadata.owner_name ||
+                "Owner";
+
+
+            const mobile =
+                metadata.mobile ||
+                "";
+
+
+            /*
+             First try owner_slot 1/2.
+            */
+
+            const countResult =
+                await supabaseClient
+                .rpc("get_owner_count");
+
+
+            if(countResult.error){
+
+                throw countResult.error;
+
+            }
+
+
+            const ownerCount =
+                Number(
+                    countResult.data || 0
+                );
+
+
+            if(ownerCount >= 2){
+
+                throw new Error(
+                    "Maximum 2 owners are already registered."
+                );
+
+            }
+
+
+            const ownerSlot =
+                ownerCount === 0
+                ? 1
+                : 2;
+
+
+            const insertProfile =
+                await supabaseClient
+                .from("owner_profile")
+                .insert({
+
+                    id:user.id,
+
+                    owner_name:ownerName,
+
+                    mobile:mobile,
+
+                    email:
+                        user.email || email,
+
+                    shop_name:"BOMBAY NX",
+
+                    owner_slot:ownerSlot
+
+                });
+
+
+            if(insertProfile.error){
+
+                throw insertProfile.error;
+
+            }
+
+        }
+
+
+        /*
+         ================================================
+         SUCCESS
+         ================================================
+        */
+
+        showMessage(
+            "loginMessage",
+            "Login successful. Opening BOMBAY NX...",
+            "success"
+        );
+
+
+        setTimeout(function(){
+
+            window.location.href =
+                "dashboard.html";
+
+        },600);
+
+
+    }catch(error){
+
+        console.error(
+            "OWNER LOGIN ERROR:",
+            error
+        );
+
+
+        showMessage(
+            "loginMessage",
+            error.message ||
+            "Login failed.",
+            "error"
+        );
+
+
+    }finally{
+
+        button.disabled = false;
+
+        button.textContent = "LOGIN";
+
+    }
+
+});
+
+
+/* =========================================================
+   CREATE OWNER ACCOUNT
+========================================================= */
+
+document
+.getElementById("signupForm")
+.addEventListener("submit",async function(event){
+
+    event.preventDefault();
+
+    clearMessages();
+
+    const button =
+        document.getElementById("signupBtn");
+
+
+    const name =
+        document
+        .getElementById("ownerName")
+        .value
+        .trim();
+
+    const mobile =
+        document
+        .getElementById("ownerMobile")
+        .value
+        .trim();
+
+    const email =
+        document
+        .getElementById("ownerEmail")
+        .value
+        .trim()
+        .toLowerCase();
+
+    const password =
+        document
+        .getElementById("ownerPassword")
+        .value;
+
+    const confirmPassword =
+        document
+        .getElementById("ownerConfirmPassword")
+        .value;
+
+
+    if(password !== confirmPassword){
+
+        showMessage(
+            "signupMessage",
+            "Passwords do not match.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(password.length < 6){
+
+        showMessage(
+            "signupMessage",
+            "Password must be at least 6 characters.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    button.disabled = true;
+    button.textContent = "CREATING...";
+
+
+    try{
+
+        /*
+         ================================================
+         CHECK OWNER COUNT
+         ================================================
+        */
+
+        const countResult =
+            await supabaseClient
+            .rpc("get_owner_count");
+
+
+        if(countResult.error){
+
+            throw countResult.error;
+
+        }
+
+
+        const ownerCount =
+            Number(
+                countResult.data || 0
+            );
+
+
+        if(ownerCount >= 2){
+
+            throw new Error(
+                "Maximum 2 owner accounts are already registered."
+            );
+
+        }
+
+
+        const ownerSlot =
+            ownerCount === 0
+            ? 1
+            : 2;
+
+
+        /*
+         ================================================
+         CREATE AUTH ACCOUNT
+         ================================================
+        */
+
+        const signupResult =
+            await supabaseClient
+            .auth
+            .signUp({
+
+                email:email,
+
+                password:password,
+
+                options:{
+
+                    data:{
+
+                        owner_name:name,
+
+                        mobile:mobile,
+
+                        owner_slot:ownerSlot
+
+                    }
+
+                }
+
+            });
+
+
+        if(signupResult.error){
+
+            throw signupResult.error;
+
+        }
+
+
+        const newUser =
+            signupResult.data.user;
+
+
+        if(!newUser){
+
+            throw new Error(
+                "Account could not be created."
+            );
+
+        }
+
+
+        /*
+         ================================================
+         IF SESSION EXISTS
+         CREATE PROFILE NOW
+         ================================================
+        */
+
+        const session =
+            signupResult.data.session;
+
+
+        if(session){
+
+            const profileInsert =
+                await supabaseClient
+                .from("owner_profile")
+                .upsert({
+
+                    id:newUser.id,
+
+                    owner_name:name,
+
+                    mobile:mobile,
+
+                    email:email,
+
+                    shop_name:"BOMBAY NX",
+
+                    owner_slot:ownerSlot
+
+                },{
+                    onConflict:"id"
+                });
+
+
+            if(profileInsert.error){
+
+                console.error(
+                    "PROFILE INSERT:",
+                    profileInsert.error
+                );
+
+            }
+
+        }
+
+
+        /*
+         ================================================
+         SIGNUP SUCCESS
+         ================================================
+        */
+
+        document
+        .getElementById("loginEmail")
+        .value = email;
+
+
+        document
+        .getElementById("loginPassword")
+        .value = "";
+
+
+        showMessage(
+            "signupMessage",
+            "Account created successfully. Now login with your email and password.",
+            "success"
+        );
+
+
+        /*
+         Clear signup fields
+        */
+
+        document
+        .getElementById("ownerName")
+        .value = "";
+
+        document
+        .getElementById("ownerMobile")
+        .value = "";
+
+        document
+        .getElementById("ownerEmail")
+        .value = "";
+
+        document
+        .getElementById("ownerPassword")
+        .value = "";
+
+        document
+        .getElementById("ownerConfirmPassword")
+        .value = "";
+
+
+        setTimeout(function(){
+
+            showLoginBox();
+
+        },1000);
+
+
+    }catch(error){
+
+        console.error(
+            "OWNER SIGNUP ERROR:",
+            error
+        );
+
+
+        showMessage(
+            "signupMessage",
+            error.message ||
+            "Account creation failed.",
+            "error"
+        );
+
+
+    }finally{
+
+        button.disabled = false;
+
+        button.textContent =
+            "CREATE ACCOUNT";
+
+    }
+
+});
+
+
+/* =========================================================
+   FORGOT PASSWORD
+========================================================= */
+
+document
+.getElementById("forgotForm")
+.addEventListener("submit",async function(event){
+
+    event.preventDefault();
+
+    clearMessages();
+
+    const button =
+        document.getElementById(
+            "forgotSendBtn"
+        );
+
+
+    const email =
+        document
+        .getElementById("forgotEmail")
+        .value
+        .trim()
+        .toLowerCase();
+
+
+    if(!email){
+
+        showMessage(
+            "forgotMessage",
+            "Please enter your email.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    button.disabled = true;
+    button.textContent =
+        "SENDING...";
+
+
+    try{
+
+        const result =
+            await supabaseClient
+            .auth
+            .resetPasswordForEmail(
+                email,
+                {
+                    redirectTo:
+                        window.location.origin +
+                        window.location.pathname
+                }
+            );
+
+
+        if(result.error){
+
+            throw result.error;
+
+        }
+
+
+        showMessage(
+            "forgotMessage",
+            "Password reset link has been sent to your email.",
+            "success"
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "PASSWORD RESET ERROR:",
+            error
+        );
+
+
+        showMessage(
+            "forgotMessage",
+            error.message ||
+            "Could not send reset link.",
+            "error"
+        );
+
+
+    }finally{
+
+        button.disabled = false;
+
+        button.textContent =
+            "SEND RESET LINK";
+
+    }
+
+});
+
+
+/* =========================================================
+   REMEMBER EMAIL
+========================================================= */
+
+window.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        const savedEmail =
+            localStorage.getItem(
+                "bombay_nx_owner_email"
+            );
+
+
+        if(savedEmail){
+
+            document
+            .getElementById("loginEmail")
+            .value = savedEmail;
+
+            document
+            .getElementById("rememberMe")
+            .checked = true;
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
